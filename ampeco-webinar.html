@@ -68,6 +68,24 @@
                 );
                 pointer-events: none;
             }
+            .back-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--muted);
+                text-decoration: none;
+                margin-bottom: 20px;
+                transition: color 0.2s ease;
+            }
+            .back-link:hover {
+                color: var(--accent2);
+            }
+            .back-link svg {
+                width: 14px;
+                height: 14px;
+            }
             .header-label {
                 font-size: 11px;
                 letter-spacing: 0.18em;
@@ -288,6 +306,22 @@
     <body>
         <header>
             <div class="container">
+                <a href="index.html" class="back-link">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2.5"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 19.5L8.25 12l7.5-7.5"
+                        />
+                    </svg>
+                    Home
+                </a>
                 <p class="header-label">Webinar Notes · AMPECO · Feb 19 2026</p>
                 <h1>
                     AI-Native Engineering:<br /><em

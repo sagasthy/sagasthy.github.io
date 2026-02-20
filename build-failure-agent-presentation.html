@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI-Powered Build Failure Analyzer & Fixer</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary-color: #1f6feb;
+                --secondary-color: #238636;
+                --accent-color: #58a6ff;
+                --warning-color: #d29922;
+                --danger-color: #da3633;
+                --bg-light: #0d1117;
+                --bg-lighter: #161b22;
+                --text-primary: #c9d1d9;
+                --text-secondary: #8b949e;
+                --border-color: #30363d;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                background: linear-gradient(
+                    135deg,
+                    var(--bg-light) 0%,
+                    #0a0e1a 100%
+                );
+                color: var(--text-primary);
+                line-height: 1.6;
+                overflow-x: hidden;
+            }
+
+            .presentation {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .slide {
+                width: 100%;
+                max-width: 1200px;
+                background: var(--bg-lighter);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 60px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                display: none;
+                animation: slideIn 0.6s ease-out;
+            }
+
+            .slide.active {
+                display: block;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            h1 {
+                color: var(--accent-color);
+                font-size: 3em;
+                margin-bottom: 20px;
+                text-shadow: 0 0 30px rgba(88, 166, 255, 0.3);
+            }
+
+            h2 {
+                color: var(--accent-color);
+                font-size: 2.2em;
+                margin-bottom: 30px;
+                border-bottom: 3px solid var(--secondary-color);
+                padding-bottom: 15px;
+            }
+
+            h3 {
+                color: var(--accent-color);
+                font-size: 1.5em;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+
+            p {
+                color: var(--text-primary);
+                font-size: 1.1em;
+                margin-bottom: 15px;
+                line-height: 1.8;
+            }
+
+            .subtitle {
+                color: var(--text-secondary);
+                font-size: 1.4em;
+                margin-bottom: 40px;
+                font-weight: 300;
+            }
+
+            .tagline {
+                color: var(--secondary-color);
+                font-size: 1.2em;
+                font-weight: 600;
+                margin: 20px 0;
+            }
+
+            ul,
+            ol {
+                margin: 20px 0 20px 40px;
+                color: var(--text-primary);
+            }
+
+            li {
+                margin-bottom: 12px;
+                font-size: 1.05em;
+                line-height: 1.8;
+            }
+
+            .highlight {
+                color: var(--accent-color);
+                font-weight: 600;
+            }
+
+            .success {
+                color: var(--secondary-color);
+                font-weight: 600;
+            }
+
+            .warning {
+                color: var(--warning-color);
+                font-weight: 600;
+            }
+
+            .danger {
+                color: var(--danger-color);
+                font-weight: 600;
+            }
+
+            .box {
+                background: var(--bg-light);
+                border-left: 4px solid var(--secondary-color);
+                padding: 20px;
+                margin: 20px 0;
+                border-radius: 6px;
+                color: var(--text-primary);
+            }
+
+            .box-warning {
+                border-left-color: var(--warning-color);
+                background: rgba(210, 153, 34, 0.1);
+            }
+
+            .box-success {
+                border-left-color: var(--secondary-color);
+                background: rgba(35, 134, 54, 0.1);
+            }
+
+            .box-primary {
+                border-left-color: var(--accent-color);
+                background: rgba(88, 166, 255, 0.1);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                color: var(--text-primary);
+            }
+
+            th {
+                background: var(--primary-color);
+                color: white;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+                border-bottom: 2px solid var(--border-color);
+            }
+
+            td {
+                padding: 12px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            tr:hover {
+                background: rgba(88, 166, 255, 0.05);
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin: 20px 0;
+            }
+
+            .grid-item {
+                background: var(--bg-light);
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+
+            .grid-item h4 {
+                color: var(--accent-color);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+            }
+
+            .badge {
+                display: inline-block;
+                background: var(--primary-color);
+                color: white;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 0.85em;
+                margin-right: 8px;
+                margin-bottom: 8px;
+                font-weight: 600;
+            }
+
+            .badge-success {
+                background: var(--secondary-color);
+            }
+
+            .badge-warning {
+                background: var(--warning-color);
+                color: #000;
+            }
+
+            .controls {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 15px;
+                z-index: 100;
+                background: var(--bg-lighter);
+                padding: 15px 25px;
+                border-radius: 50px;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            button {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                font-size: 1em;
+            }
+
+            button:hover {
+                background: var(--accent-color);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(88, 166, 255, 0.3);
+            }
+
+            button:disabled {
+                background: var(--text-secondary);
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .slide-counter {
+                position: fixed;
+                top: 20px;
+                right: 30px;
+                color: var(--text-secondary);
+                font-size: 1em;
+                font-weight: 600;
+            }
+
+            .flow-diagram {
+                background: var(--bg-light);
+                padding: 30px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+                margin: 20px 0;
+                color: var(--text-primary);
+                text-align: center;
+                line-height: 2.5;
+                font-family: "Courier New", monospace;
+                font-weight: 600;
+            }
+
+            .arrow {
+                color: var(--accent-color);
+                font-size: 1.5em;
+                display: inline-block;
+                margin: 0 10px;
+            }
+
+            .checkmark {
+                color: var(--secondary-color);
+                font-weight: bold;
+                margin-right: 8px;
+            }
+
+            .title-slide {
+                text-align: center;
+                padding: 100px 60px;
+            }
+
+            .title-slide h1 {
+                font-size: 3.5em;
+                margin-bottom: 30px;
+            }
+
+            code {
+                background: var(--bg-light);
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: var(--accent-color);
+                font-family: "Courier New", monospace;
+                font-size: 0.9em;
+            }
+
+            .code-block {
+                background: var(--bg-light);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 15px;
+                margin: 15px 0;
+                overflow-x: auto;
+                color: var(--accent-color);
+                font-family: "Courier New", monospace;
+                font-size: 0.9em;
+                line-height: 1.5;
+            }
+
+            .comparison {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin: 20px 0;
+            }
+
+            .comparison-item {
+                padding: 20px;
+                border-radius: 8px;
+            }
+
+            .comparison-item.old {
+                background: rgba(218, 54, 51, 0.1);
+                border: 1px solid var(--danger-color);
+            }
+
+            .comparison-item.new {
+                background: rgba(35, 134, 54, 0.1);
+                border: 1px solid var(--secondary-color);
+            }
+
+            .comparison-item h4 {
+                margin-bottom: 15px;
+                font-size: 1.1em;
+            }
+
+            .metric {
+                text-align: center;
+                padding: 20px;
+                margin: 10px 0;
+                background: var(--bg-light);
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+
+            .metric-value {
+                font-size: 2.5em;
+                color: var(--accent-color);
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .metric-label {
+                color: var(--text-secondary);
+                font-size: 0.9em;
+            }
+
+            @media (max-width: 1024px) {
+                .grid,
+                .comparison {
+                    grid-template-columns: 1fr;
+                }
+
+                h1 {
+                    font-size: 2.2em;
+                }
+
+                h2 {
+                    font-size: 1.8em;
+                }
+
+                .slide {
+                    padding: 40px;
+                }
+
+                .title-slide {
+                    padding: 60px 40px;
+                }
+            }
+
+            .footer {
+                color: var(--text-secondary);
+                font-size: 0.9em;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border-color);
+                text-align: center;
+            }
+
+            .back-link {
+                position: fixed;
+                top: 20px;
+                left: 30px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-decoration: none;
+                z-index: 100;
+                transition: color 0.2s ease;
+            }
+            .back-link:hover {
+                color: var(--accent-color);
+            }
+            .back-link svg {
+                width: 14px;
+                height: 14px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="index.html" class="back-link">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+            </svg>
+            Home
+        </a>
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">0</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="presentation">
+            <div class="slide active title-slide">
+                <h1>🤖 AI-Powered Build Failure Analyzer & Fixer</h1>
+                <p class="subtitle">
+                    Autonomous Code Fix Agent with GitHub Copilot SDK
+                </p>
+                <div
+                    style="
+                        margin-top: 60px;
+                        color: var(--text-secondary);
+                        font-size: 1.1em;
+                    "
+                >
+                    <p>Automated Incident Response for CI/CD Pipelines</p>
+                    <p style="margin-top: 40px; color: var(--accent-color)">
+                        Enterprise-Ready • Zero Approval • Compliance-Safe
+                    </p>
+                </div>
+                <div class="footer">
+                    Build Failure Analysis & Automated PR Generation | February
+                    2026
+                </div>
+            </div>
+
+            <!-- Slide 2: Problem Statement -->
+            <div class="slide">
+                <h2>The Problem</h2>
+                <p>
+                    Build failures impact developer productivity and
+                    time-to-market:
+                </p>
+                <ul>
+                    <li>
+                        <span class="checkmark">⏰</span>Engineers spend hours
+                        debugging CI/CD failures instead of coding
+                    </li>
+                    <li>
+                        <span class="checkmark">🔄</span>Repetitive issues
+                        (syntax errors, version mismatches, obvious bugs) waste
+                        cycles
+                    </li>
+                    <li>
+                        <span class="checkmark">🌍</span>Delays propagate across
+                        distributed teams in different timezones
+                    </li>
+                    <li>
+                        <span class="checkmark">💰</span>Financial services
+                        compliance requires audit trails for all changes
+                    </li>
+                    <li>
+                        <span class="checkmark">🛡️</span>Existing AI tools lack
+                        enterprise security controls and transparency
+                    </li>
+                </ul>
+                <div class="box box-warning">
+                    <strong>Impact at Broadridge:</strong> Typical resolution
+                    time is 30-60 minutes for obvious fixes. With 50+ squads,
+                    this represents significant opportunity cost.
+                </div>
+            </div>
+
+            <!-- Slide 3: Solution Overview -->
+            <div class="slide">
+                <h2>The Solution</h2>
+                <p class="tagline">
+                    An autonomous AI agent that detects, analyzes, fixes, and
+                    raises PRs for build failures—all without human intervention
+                    for safe issues.
+                </p>
+
+                <h3>Core Workflow</h3>
+                <div class="flow-diagram">
+                    <div>Build Fails</div>
+                    <div class="arrow">→</div>
+                    <div>Webhook Triggers</div>
+                    <div class="arrow">→</div>
+                    <div>Agent Analyzes</div>
+                    <br />
+                    <div>Creates PR</div>
+                    <div class="arrow">←</div>
+                    <div>Proposes Fix</div>
+                    <div class="arrow">←</div>
+                    <div>Validates Safety</div>
+                    <br />
+                    <div>Team Reviews</div>
+                    <div class="arrow">←</div>
+                    <div>Sends Email</div>
+                    <div class="arrow">←</div>
+                    <div>Merges (if approved)</div>
+                </div>
+
+                <h3>Key Capability</h3>
+                <p>
+                    The agent only auto-fixes
+                    <span class="highlight">low-risk issues</span> (typos,
+                    syntax, version bumps).
+                    <span class="warning"
+                        >Complex or compliance-sensitive changes require human
+                        approval.</span
+                    >
+                </p>
+            </div>
+
+            <!-- Slide 4: Why GitHub Copilot SDK + BYOK -->
+            <div class="slide">
+                <h2>Why GitHub Copilot SDK + BYOK?</h2>
+                <p>
+                    You challenged the Claude API approach—and you were right.
+                </p>
+
+                <div class="comparison">
+                    <div class="comparison-item old">
+                        <h4>❌ Claude API Only</h4>
+                        <ul style="margin: 0">
+                            <li>Requires new approval</li>
+                            <li>Separate billing cycle</li>
+                            <li>Build orchestration from scratch</li>
+                            <li>Manual GitHub API integration</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item new">
+                        <h4>✅ Copilot SDK + BYOK</h4>
+                        <ul style="margin: 0">
+                            <li>No new approvals needed</li>
+                            <li>Use existing Anthropic budget</li>
+                            <li>Built-in agent runtime</li>
+                            <li>Native Git/GitHub tools</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="box box-success">
+                    <strong>The Game Changer:</strong> GitHub Copilot SDK
+                    exposes the same production-tested agent runtime used by
+                    Copilot CLI. BYOK lets you use Anthropic Claude as the
+                    backend—no GitHub Copilot quota consumed.
+                </div>
+
+                <h3>What You Get Built-In</h3>
+                <ul>
+                    <li>Planning engine (breaks down complex tasks)</li>
+                    <li>Tool orchestration (agent decides what to call)</li>
+                    <li>Multi-turn execution (iterative refinement)</li>
+                    <li>Git operations (clone, commit, PR creation)</li>
+                    <li>Stream support (real-time feedback)</li>
+                </ul>
+            </div>
+
+            <!-- Slide 5: Architecture -->
+            <div class="slide">
+                <h2>Technical Architecture</h2>
+
+                <div style="margin: 30px 0">
+                    <h3>Stack Components</h3>
+                    <div class="grid">
+                        <div class="grid-item">
+                            <h4>CI/CD Layer</h4>
+                            <p><code>GitHub Actions</code> (webhooks)</p>
+                            <p><code>GitHub</code> (SCM)</p>
+                        </div>
+                        <div class="grid-item">
+                            <h4>Agent Runtime</h4>
+                            <p><code>GitHub Copilot SDK</code> (Python)</p>
+                            <p><code>Claude 3.5 Sonnet</code> (via BYOK)</p>
+                        </div>
+                        <div class="grid-item">
+                            <h4>Compute</h4>
+                            <p><code>OpenShift</code> (container deployment)</p>
+                            <p><code>Python 3.11+</code></p>
+                        </div>
+                        <div class="grid-item">
+                            <h4>Integration</h4>
+                            <p><code>GitHub API</code> (PR creation)</p>
+                            <p><code>Email service</code> (notifications)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Data Flow</h3>
+                <div class="code-block">
+                    webhook event (OpenShift ingress) ↓ Python Agent Service
+                    (OpenShift pod) ├─ Fetch build logs & git diff ├─ Call
+                    Copilot SDK │ └─ SDK invokes Claude (BYOK) ├─ Agent decides:
+                    auto-fix vs needs-review ├─ Create PR (GitHub API) └─ Send
+                    email notification
+                </div>
+            </div>
+
+            <!-- Slide 6: Risk Levels & Safety Gates -->
+            <div class="slide">
+                <h2>Safety Framework: Risk Levels</h2>
+                <p>
+                    The agent classifies every issue and enforces appropriate
+                    gates:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk Level</th>
+                            <th>Examples</th>
+                            <th>Action</th>
+                            <th>Compliance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="badge badge-success"
+                                    >AUTO_FIX</span
+                                >
+                            </td>
+                            <td>
+                                Typos, syntax errors, linting, version bumps
+                            </td>
+                            <td>
+                                Auto-create PR, run tests, optional auto-merge
+                            </td>
+                            <td>Logged for audit</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="badge badge-warning"
+                                    >NEEDS_REVIEW</span
+                                >
+                            </td>
+                            <td>DB migrations, config changes, test updates</td>
+                            <td>Create PR, flag for human approval</td>
+                            <td>Mandatory review</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge">MANUAL_ONLY</span></td>
+                            <td>Payment logic, blockchain, security code</td>
+                            <td>Create GitHub Issue, no PR</td>
+                            <td>Zero automation</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="box box-primary">
+                    <strong>Broadridge Compliance:</strong> All AI-generated
+                    changes logged with decision rationale.
+                    Payment/blockchain/compliance code never auto-fixed. Code
+                    review required before merge.
+                </div>
+            </div>
+
+            <!-- Slide 7: Implementation Highlights -->
+            <div class="slide">
+                <h2>Implementation Highlights</h2>
+
+                <h3>1. Webhook Receiver (OpenShift Pod)</h3>
+                <p>
+                    GitHub Actions → OpenShift Ingress Route → Python Flask
+                    service listens for build_run.failure events
+                </p>
+
+                <h3>2. Agent Analysis (Copilot SDK)</h3>
+                <p>Copilot SDK manages the agentic loop:</p>
+                <ul>
+                    <li>Sends build logs + git diff to Claude (via BYOK)</li>
+                    <li>
+                        Claude reasons about root cause (with extended thinking
+                        for complex issues)
+                    </li>
+                    <li>Agent proposes fix with confidence & risk level</li>
+                </ul>
+
+                <h3>3. Safety Validation</h3>
+                <ul>
+                    <li>Linting check on proposed code</li>
+                    <li>Risk level enforcement</li>
+                    <li>Audit logging of all decisions</li>
+                </ul>
+
+                <h3>4. PR Creation & Notification</h3>
+                <ul>
+                    <li>Branch: <code>fix/auto-{runId}-{timestamp}</code></li>
+                    <li>
+                        Labels: <code>ai-generated</code>,
+                        <code>risk-{level}</code>
+                    </li>
+                    <li>Email with summary & PR link</li>
+                </ul>
+
+                <div class="box box-success">
+                    <strong>Reusability:</strong> All code packaged as OpenShift
+                    Helm charts. Teams customize risk policies per repo via YAML
+                    config.
+                </div>
+            </div>
+
+            <!-- Slide 8: Cost & Quota Analysis -->
+            <div class="slide">
+                <h2>Cost & Quota Impact</h2>
+
+                <h3>GitHub Copilot Business Plan</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Current Usage</h4>
+                        <p>
+                            Enterprise Copilot Business subscription already in
+                            place.
+                        </p>
+                        <p
+                            style="
+                                color: var(--text-secondary);
+                                font-size: 0.95em;
+                            "
+                        >
+                            Covers IDE completions, Copilot Chat, Code
+                            generation.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>SDK Impact</h4>
+                        <p>
+                            <span class="success"
+                                >✅ Zero additional quota</span
+                            >
+                        </p>
+                        <p
+                            style="
+                                color: var(--text-secondary);
+                                font-size: 0.95em;
+                            "
+                        >
+                            SDK is free addition to Business plan. BYOK billing
+                            separate.
+                        </p>
+                    </div>
+                </div>
+
+                <h3>Claude API via BYOK</h3>
+                <div class="metric">
+                    <div class="metric-value">$0.003 - $0.01</div>
+                    <div class="metric-label">per failure analysis</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">$3 - $10</div>
+                    <div class="metric-label">
+                        monthly (1000 failures/month estimate)
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">Separate</div>
+                    <div class="metric-label">
+                        from Copilot Business billing
+                    </div>
+                </div>
+
+                <div class="box box-success">
+                    <strong>Approval Path:</strong> BYOK uses existing Anthropic
+                    relationship—no new vendor approval required.
+                </div>
+            </div>
+
+            <!-- Slide 9: Deployment Model -->
+            <div class="slide">
+                <h2>Deployment: OpenShift</h2>
+
+                <h3>Container Architecture</h3>
+                <div class="code-block">
+                    OpenShift Deployment (Replicas: 2) ├── Pod 1:
+                    build-failure-agent │ ├── Python 3.11 runtime │ ├── Copilot
+                    SDK + CLI │ ├── Flask webhook receiver │ └── GitHub API
+                    client ├── Pod 2: build-failure-agent └── Service:
+                    build-failure-agent-webhook └── OpenShift Route: TLS edge
+                    termination
+                </div>
+
+                <h3>Configuration via Secrets</h3>
+                <ul>
+                    <li>
+                        <code>anthropic-api-key</code> → Mounted at runtime for
+                        BYOK
+                    </li>
+                    <li>
+                        <code>github-token</code> → For PR creation & API calls
+                    </li>
+                    <li>
+                        <code>webhook-secret</code> → Signed webhook
+                        verification
+                    </li>
+                </ul>
+
+                <h3>Scalability</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Horizontal Scaling</h4>
+                        <p>
+                            Pod replicas auto-scale on CPU/memory requests
+                            (Kubernetes HPA).
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Queue Fallback</h4>
+                        <p>
+                            Optional RabbitMQ/Kafka for webhook backpressure if
+                            pod overloaded.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 10: Coaching & Reusability -->
+            <div class="slide">
+                <h2>Coaching & Org-Wide Reusability</h2>
+
+                <p>
+                    This becomes a
+                    <span class="highlight"
+                        >teaching tool for your engineering excellence
+                        program.</span
+                    >
+                </p>
+
+                <h3>Three Levels of Adoption</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Level 1: Use It</h4>
+                        <p>
+                            Teams deploy the agent to their repos. Auto-fixes
+                            simple failures.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Level 2: Customize</h4>
+                        <p>Teams edit risk policy YAML for their tech stack.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Level 3: Extend</h4>
+                        <p>
+                            Advanced teams build custom tools that the agent can
+                            call.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Level 4: Build</h4>
+                        <p>
+                            Architecting their own agentic workflows using
+                            Copilot SDK.
+                        </p>
+                    </div>
+                </div>
+
+                <h3>Template Repository</h3>
+                <div class="code-block">
+                    build-failure-agent/ ├── agent/ │ ├── analyzer.py │ └──
+                    risk_policies.yaml ├── openshift/ │ ├── deployment.yaml │
+                    ├── service.yaml │ └── route.yaml ├── examples/ │ ├──
+                    java-project/ │ └── python-project/ └── docs/ └──
+                    customization-guide.md
+                </div>
+
+                <div class="box box-success">
+                    <strong>Coaching Angle:</strong> Show teams "here's how
+                    Copilot SDK replaced 500+ lines of custom orchestration
+                    code." Real example of AI reducing complexity.
+                </div>
+            </div>
+
+            <!-- Slide 11: Risks & Mitigations -->
+            <div class="slide">
+                <h2>Risks & Mitigations</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Impact</th>
+                            <th>Mitigation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="danger"
+                                    >Agent proposes wrong fix</span
+                                >
+                            </td>
+                            <td>Code quality issues in PR</td>
+                            <td>
+                                Linting + type checking before PR. Human review
+                                required for NEEDS_REVIEW level.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="danger"
+                                    >False confidence on risky code</span
+                                >
+                            </td>
+                            <td>Compliance violation</td>
+                            <td>
+                                Conservative risk policies. Payment/compliance
+                                logic → MANUAL_ONLY. Audit logging.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="warning">Webhook overload</span>
+                            </td>
+                            <td>Pod resource exhaustion</td>
+                            <td>
+                                Horizontal scaling + queue fallback. Rate
+                                limiting on webhook receiver.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="warning"
+                                    >Anthropic API quota spike</span
+                                >
+                            </td>
+                            <td>Cost overrun</td>
+                            <td>
+                                Monthly budget tracking. Defer non-urgent
+                                analyses. Batch processing for off-peak.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="success"
+                                    >False negatives (missed fixes)</span
+                                >
+                            </td>
+                            <td>Agent fails to help</td>
+                            <td>
+                                Graceful degradation. Issues created for manual
+                                review. No harm.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="box box-primary">
+                    <strong>Philosophy:</strong> Conservative by default. Better
+                    to over-flag for human review than auto-fix something risky.
+                </div>
+            </div>
+
+            <!-- Slide 12: Success Metrics -->
+            <div class="slide">
+                <h2>Success Metrics</h2>
+
+                <p>How to measure impact:</p>
+
+                <div class="grid">
+                    <div class="metric" style="grid-column: 1">
+                        <div class="metric-value" id="metric1">60 min</div>
+                        <div class="metric-label">
+                            → <span class="success">5 min</span> avg resolution
+                            time
+                        </div>
+                    </div>
+                    <div class="metric" style="grid-column: 2">
+                        <div class="metric-value" id="metric2">40%</div>
+                        <div class="metric-label">
+                            failures auto-fixed (target)
+                        </div>
+                    </div>
+                    <div class="metric" style="grid-column: 1">
+                        <div class="metric-value" id="metric3">~$200K</div>
+                        <div class="metric-label">annual dev time saved</div>
+                    </div>
+                    <div class="metric" style="grid-column: 2">
+                        <div class="metric-value" id="metric4">100%</div>
+                        <div class="metric-label">audit coverage</div>
+                    </div>
+                </div>
+
+                <h3>Dashboard Tracking</h3>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span> Failures detected &
+                        analyzed
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Auto-fixed vs
+                        needs-review split
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> PR merge rate (how many
+                        agent PRs approved)
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> False positive rate
+                        (agent proposed wrong fix)
+                    </li>
+                    <li><span class="checkmark">✓</span> Cost per analysis</li>
+                    <li>
+                        <span class="checkmark">✓</span> Adoption by team/repo
+                    </li>
+                </ul>
+
+                <div class="box box-success">
+                    <strong>Coaching ROI:</strong> Every developer time hour
+                    saved = $100+. At 50 squads × 2 hours/month saved = $120K+
+                    annual value.
+                </div>
+            </div>
+
+            <!-- Slide 13: Timeline & Rollout -->
+            <div class="slide">
+                <h2>Implementation Timeline</h2>
+
+                <h3>Phase 1: Prototype (Weeks 1-3)</h3>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span> Set up Copilot SDK +
+                        BYOK locally
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Build core agent
+                        analyzer (Python)
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Test on 10-20 real
+                        build failures from logs
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Manual PR creation
+                        validation
+                    </li>
+                </ul>
+
+                <h3>Phase 2: MVP on OpenShift (Weeks 4-6)</h3>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span> Create OpenShift
+                        deployment (YAML)
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Set up webhook from
+                        GitHub Actions
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Add audit logging &
+                        monitoring
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Pilot with 1-2 teams
+                        (java & python projects)
+                    </li>
+                </ul>
+
+                <h3>Phase 3: Hardening & Scale (Weeks 7-10)</h3>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span> Risk policy refinement
+                        based on pilot feedback
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Cost optimization &
+                        quota monitoring
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Org-wide rollout (all
+                        50+ squads)
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Coaching materials &
+                        demos
+                    </li>
+                </ul>
+
+                <div class="metric" style="margin-top: 30px">
+                    <div class="metric-value">10 weeks</div>
+                    <div class="metric-label">
+                        from idea to org-wide production
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 14: Why Now? -->
+            <div class="slide">
+                <h2>Why This Matters Now</h2>
+
+                <h3>Market Shift (February 2026)</h3>
+                <p>
+                    Copilot SDK just entered technical preview (January 2026),
+                    opening new possibilities:
+                </p>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span>
+                        <span class="highlight"
+                            >Production-grade agent runtime</span
+                        >
+                        now available as code library
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> BYOK support = no
+                        vendor lock-in, use Anthropic directly
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Native Git/GitHub
+                        integration (no custom wrappers)
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Lower barrier to entry
+                        than building agents from scratch
+                    </li>
+                </ul>
+
+                <h3>Your Position at Broadridge</h3>
+                <p>
+                    This is a <span class="success">perfect convergence</span>:
+                </p>
+                <ul>
+                    <li>
+                        <span class="checkmark">✓</span> Your engineering
+                        excellence role = natural home for this
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> 50+ squads = immediate
+                        audience for coaching & adoption
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> Compliance environment
+                        = template for regulated industries
+                    </li>
+                    <li>
+                        <span class="checkmark">✓</span> GitHub + Copilot
+                        already licensed = no procurement friction
+                    </li>
+                </ul>
+
+                <div class="box box-success">
+                    <strong>Opportunity:</strong> Be the team that shows how
+                    agentic AI reduces complexity in enterprise environments.
+                </div>
+            </div>
+
+            <!-- Slide 15: Next Steps -->
+            <div class="slide">
+                <h2>Next Steps</h2>
+
+                <h3>This Week</h3>
+                <ol>
+                    <li>Schedule architecture review with platform team</li>
+                    <li>
+                        Get approval for Anthropic BYOK (should be
+                        quick—existing relationship)
+                    </li>
+                    <li>Provision OpenShift namespace & secrets</li>
+                </ol>
+
+                <h3>Next 2 Weeks</h3>
+                <ol>
+                    <li>Clone Copilot SDK examples from GitHub</li>
+                    <li>Build local prototype with 1-2 test repos</li>
+                    <li>Validate Claude analysis quality on real failures</li>
+                    <li>Document findings & risk policies</li>
+                </ol>
+
+                <h3>Decision Gate (Week 3)</h3>
+                <ul>
+                    <li>
+                        <span class="highlight">Go/No-Go</span>: Proceed to MVP
+                        on OpenShift?
+                    </li>
+                    <li>If go: assign 1 dev for 2-month build</li>
+                    <li>
+                        If no: document learnings for future async agent work
+                    </li>
+                </ul>
+
+                <div class="box box-primary">
+                    <strong>Conversation Starter:</strong> "We can automate 40%
+                    of our build failures using GitHub Copilot SDK + Claude.
+                    Zero new approvals. Let me show you the prototype."
+                </div>
+            </div>
+
+            <!-- Slide 16: Q&A -->
+            <div class="slide">
+                <h2 style="text-align: center; margin: 80px 0">Questions?</h2>
+
+                <div style="margin-top: 60px; text-align: center">
+                    <p
+                        style="
+                            font-size: 1.3em;
+                            color: var(--accent-color);
+                            margin-bottom: 30px;
+                        "
+                    >
+                        <strong>Key Takeaway:</strong>
+                    </p>
+                    <p style="font-size: 1.15em; line-height: 1.8">
+                        GitHub Copilot SDK + BYOK gives us a production-ready
+                        agent runtime.<br />
+                        No new approvals. No quota conflicts. Enterprise-safe by
+                        design.
+                    </p>
+                    <p
+                        style="
+                            margin-top: 60px;
+                            color: var(--text-secondary);
+                            font-size: 1em;
+                        "
+                    >
+                        Supporting documents available: <br />
+                        <code>ARCHITECTURE.md</code> •
+                        <code>CODE_EXAMPLES.md</code> •
+                        <code>RISK_POLICIES.yaml</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+            <button id="next-btn" onclick="nextSlide()">Next →</button>
+        </div>
+
+        <script>
+            let currentSlide = 0;
+            const slides = document.querySelectorAll(".slide");
+            const totalSlides = slides.length;
+
+            document.getElementById("total-slides").textContent = totalSlides;
+
+            function showSlide(n) {
+                slides[currentSlide].classList.remove("active");
+                currentSlide = (n + totalSlides) % totalSlides;
+                slides[currentSlide].classList.add("active");
+
+                document.getElementById("current-slide").textContent =
+                    currentSlide + 1;
+                document.getElementById("prev-btn").disabled =
+                    currentSlide === 0;
+                document.getElementById("next-btn").disabled =
+                    currentSlide === totalSlides - 1;
+            }
+
+            function nextSlide() {
+                showSlide(currentSlide + 1);
+            }
+
+            function previousSlide() {
+                showSlide(currentSlide - 1);
+            }
+
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowRight") nextSlide();
+                if (e.key === "ArrowLeft") previousSlide();
+            });
+
+            // Initialize
+            showSlide(0);
+        </script>
+    </body>
+</html>
