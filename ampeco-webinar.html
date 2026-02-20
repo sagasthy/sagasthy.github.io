@@ -1,0 +1,1577 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AMPECO Webinar — AI-Native Engineering</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #0c0f1a;
+                --surface: #131827;
+                --card: #1a2035;
+                --border: #252d45;
+                --accent: #3b82f6;
+                --accent2: #60a5fa;
+                --accent-glow: rgba(59, 130, 246, 0.15);
+                --text: #e2e8f0;
+                --muted: #8b97b8;
+                --tag-bg: rgba(59, 130, 246, 0.12);
+                --agent-blue: #2563eb;
+                --agent-ring: #3b82f6;
+                --human-teal: #0d9488;
+                --success: #10b981;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                font-size: 15px;
+                line-height: 1.7;
+                padding: 0 0 80px;
+            }
+
+            /* ── HEADER ── */
+            header {
+                background: linear-gradient(
+                    135deg,
+                    #0f1729 0%,
+                    #111c35 60%,
+                    #0d1520 100%
+                );
+                border-bottom: 1px solid var(--border);
+                padding: 52px 60px 44px;
+                position: relative;
+                overflow: hidden;
+            }
+            header::before {
+                content: "";
+                position: absolute;
+                top: -80px;
+                right: -60px;
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(
+                    circle,
+                    rgba(59, 130, 246, 0.12) 0%,
+                    transparent 70%
+                );
+                pointer-events: none;
+            }
+            .header-label {
+                font-size: 11px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--accent2);
+                font-weight: 500;
+                margin-bottom: 14px;
+            }
+            header h1 {
+                font-family: "DM Serif Display", serif;
+                font-size: 38px;
+                line-height: 1.2;
+                color: #fff;
+                max-width: 640px;
+                margin-bottom: 16px;
+            }
+            header h1 em {
+                font-style: italic;
+                color: var(--accent2);
+            }
+            .header-meta {
+                display: flex;
+                gap: 24px;
+                flex-wrap: wrap;
+                margin-top: 8px;
+            }
+            .meta-pill {
+                background: var(--tag-bg);
+                border: 1px solid rgba(59, 130, 246, 0.25);
+                color: var(--accent2);
+                border-radius: 100px;
+                padding: 4px 14px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            /* ── LAYOUT ── */
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+
+            section {
+                margin-top: 56px;
+            }
+
+            .section-title {
+                font-family: "DM Serif Display", serif;
+                font-size: 22px;
+                color: #fff;
+                margin-bottom: 24px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .section-title::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+            /* ── DIAGRAM ── */
+            .diagram-wrap {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 40px 32px 36px;
+                overflow-x: auto;
+            }
+
+            .diagram-title {
+                font-family: "DM Serif Display", serif;
+                font-size: 17px;
+                color: var(--muted);
+                margin-bottom: 32px;
+                text-align: center;
+                letter-spacing: 0.02em;
+            }
+
+            svg.process-diagram {
+                display: block;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 980px;
+            }
+
+            /* ── NOTES GRID ── */
+            .notes-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            @media (max-width: 720px) {
+                .notes-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .note-card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 24px 26px;
+                transition: border-color 0.2s;
+            }
+            .note-card:hover {
+                border-color: rgba(59, 130, 246, 0.4);
+            }
+            .note-card.full {
+                grid-column: 1 / -1;
+            }
+            .note-card.accent {
+                border-color: rgba(59, 130, 246, 0.3);
+                background: linear-gradient(
+                    135deg,
+                    var(--card) 0%,
+                    rgba(37, 99, 235, 0.08) 100%
+                );
+            }
+
+            .card-label {
+                font-size: 10.5px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                font-weight: 600;
+                color: var(--accent2);
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .card-label svg {
+                opacity: 0.85;
+            }
+
+            .note-card ul {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .note-card ul li {
+                color: var(--text);
+                font-size: 14px;
+                padding-left: 18px;
+                position: relative;
+                line-height: 1.6;
+            }
+            .note-card ul li::before {
+                content: "→";
+                position: absolute;
+                left: 0;
+                color: var(--accent);
+                font-size: 12px;
+                top: 2px;
+            }
+
+            .highlight-box {
+                background: rgba(59, 130, 246, 0.08);
+                border-left: 3px solid var(--accent);
+                border-radius: 0 8px 8px 0;
+                padding: 14px 18px;
+                margin-top: 12px;
+                font-size: 13.5px;
+                color: var(--accent2);
+                font-style: italic;
+            }
+
+            .tag {
+                display: inline-block;
+                background: var(--tag-bg);
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                color: var(--accent2);
+                border-radius: 6px;
+                padding: 2px 9px;
+                font-size: 11.5px;
+                font-weight: 500;
+                margin-right: 4px;
+                margin-bottom: 4px;
+            }
+            .tag.green {
+                background: rgba(16, 185, 129, 0.1);
+                border-color: rgba(16, 185, 129, 0.25);
+                color: #34d399;
+            }
+            .tag.amber {
+                background: rgba(245, 158, 11, 0.1);
+                border-color: rgba(245, 158, 11, 0.25);
+                color: #fbbf24;
+            }
+
+            /* ── QUOTE ── */
+            .big-quote {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-left: 4px solid var(--accent);
+                border-radius: 0 14px 14px 0;
+                padding: 28px 32px;
+                margin-top: 56px;
+                font-family: "DM Serif Display", serif;
+                font-size: 20px;
+                color: #c7d4f0;
+                font-style: italic;
+                line-height: 1.5;
+            }
+            .big-quote cite {
+                display: block;
+                font-family: "DM Sans", sans-serif;
+                font-size: 13px;
+                font-style: normal;
+                color: var(--muted);
+                margin-top: 14px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="container">
+                <p class="header-label">Webinar Notes · AMPECO · Feb 19 2026</p>
+                <h1>
+                    AI-Native Engineering:<br /><em
+                        >How AMPECO Rebuilt Its Software Engine</em
+                    >
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-pill">Orlin Radev — CEO, AMPECO</span>
+                    <span class="meta-pill">Daily Releases Mon–Thu</span>
+                </div>
+                <div class="header-meta">
+                    <span class="meta-pill"
+                        >Alexander Alexiev — CTO, AMPECO</span
+                    >
+                    <span class="meta-pill">Autonomous Agent Workflows</span>
+                    <span class="meta-pill">Recursive Self-Improvement</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- DIAGRAM -->
+            <section>
+                <h2 class="section-title">The AI-Native Engineering Process</h2>
+                <h3>
+                    Webinar Recording Link:
+                    <a
+                        href="https://crg6h04.na1.hubspotlinks.com/Ctc/U+113/cRg6H04/VWH2ql73X2xSW5w1W_25QRfmxW1zSvF_5KM8-ZN5t-njg5nXHCW50kH_H6lZ3nJW3JcwWs2PBg7hW9dq_DB6_5jrRN2f-LkrC18-FW1gQ9bD5JQlNjW4cLrGJ5K45y1W6_6Wrv1GPzg6W1JRlQ26r3mJkW7PYGxW5Yy5rfN3NgZB_7Q82TW5VH7181snlPWW2Sr36y5Pt6RDN5Cqhh6ZKt9sW3xgV9-8bRwCQW5cntFD55JgqFW3rTL304vtmYCN5kPF5LGwfv2MgFsw3P-qXPW3ppBGW22-tC4W8VRNxJ9g4zLzW3H2gCL1_fZzmW6c-jnM8k-1sbW8rCSxQ1n95Y9W6R_1Ld8ZpZy2W8Df34v50m_c7W8FCLJH4nm_h3W2XKn613t9SKQW4dt4nn2q1Kg9W9b_hbj4-fDVbW8xBxbN1XVzNlW5lfPWl4-qFwTW1z9kns7gS3L-W74Dsf29lSdF9f8M17dH04"
+                        target="_blank"
+                        style="
+                            color: var(--accent2);
+                            text-decoration: underline;
+                            font-size: 0.85em;
+                        "
+                        >Click here to view recording</a
+                    >
+                </h3>
+                <br />
+                <div class="diagram-wrap">
+                    <p class="diagram-title">
+                        CoOperator Dev Agent — End-to-End Autonomous Workflow
+                    </p>
+
+                    <svg
+                        class="process-diagram"
+                        viewBox="0 0 960 420"
+                        xmlns="http://www.w3.org/2000/svg"
+                        font-family="DM Sans, sans-serif"
+                    >
+                        <defs>
+                            <marker
+                                id="arr"
+                                markerWidth="7"
+                                markerHeight="7"
+                                refX="6"
+                                refY="3.5"
+                                orient="auto"
+                            >
+                                <path d="M1,1 L6,3.5 L1,6 Z" fill="#3b82f6" />
+                            </marker>
+                            <marker
+                                id="arr-muted"
+                                markerWidth="7"
+                                markerHeight="7"
+                                refX="6"
+                                refY="3.5"
+                                orient="auto"
+                            >
+                                <path d="M1,1 L6,3.5 L1,6 Z" fill="#4a5a80" />
+                            </marker>
+                            <filter id="glow">
+                                <feGaussianBlur
+                                    stdDeviation="2.5"
+                                    result="blur"
+                                />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- ── ALIGNMENT SYNC BOX ── -->
+                        <rect
+                            x="8"
+                            y="140"
+                            width="120"
+                            height="150"
+                            rx="10"
+                            fill="#131827"
+                            stroke="#252d45"
+                            stroke-width="1.5"
+                        />
+                        <text
+                            x="68"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#8b97b8"
+                            font-size="9.5"
+                            letter-spacing="0.1em"
+                            font-weight="600"
+                        >
+                            ALIGNMENT
+                        </text>
+                        <text
+                            x="68"
+                            y="172"
+                            text-anchor="middle"
+                            fill="#8b97b8"
+                            font-size="9.5"
+                            letter-spacing="0.1em"
+                            font-weight="600"
+                        >
+                            SYNC
+                        </text>
+                        <!-- Product Owner icon -->
+                        <circle
+                            cx="55"
+                            cy="205"
+                            r="18"
+                            fill="#1a2035"
+                            stroke="#0d9488"
+                            stroke-width="1.5"
+                        />
+                        <circle
+                            cx="55"
+                            cy="199"
+                            r="6"
+                            fill="#0d9488"
+                            opacity="0.8"
+                        />
+                        <path
+                            d="M41,218 Q55,210 69,218"
+                            fill="#0d9488"
+                            opacity="0.6"
+                        />
+                        <text
+                            x="55"
+                            y="231"
+                            text-anchor="middle"
+                            fill="#94a3b8"
+                            font-size="8.5"
+                        >
+                            Product
+                        </text>
+                        <text
+                            x="55"
+                            y="241"
+                            text-anchor="middle"
+                            fill="#94a3b8"
+                            font-size="8.5"
+                        >
+                            Owner
+                        </text>
+                        <!-- Engineer icon -->
+                        <circle
+                            cx="93"
+                            cy="205"
+                            r="18"
+                            fill="#1a2035"
+                            stroke="#0d9488"
+                            stroke-width="1.5"
+                        />
+                        <circle
+                            cx="93"
+                            cy="199"
+                            r="6"
+                            fill="#0d9488"
+                            opacity="0.8"
+                        />
+                        <path
+                            d="M79,218 Q93,210 107,218"
+                            fill="#0d9488"
+                            opacity="0.6"
+                        />
+                        <text
+                            x="93"
+                            y="231"
+                            text-anchor="middle"
+                            fill="#94a3b8"
+                            font-size="8.5"
+                        >
+                            Engineer
+                        </text>
+
+                        <!-- Arrow from alignment to main box -->
+                        <line
+                            x1="128"
+                            y1="215"
+                            x2="153"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+                        <text
+                            x="140"
+                            y="208"
+                            text-anchor="middle"
+                            fill="#4a5a80"
+                            font-size="8"
+                        >
+                            Agent
+                        </text>
+                        <text
+                            x="140"
+                            y="217"
+                            text-anchor="middle"
+                            fill="#4a5a80"
+                            font-size="8"
+                        >
+                            Trigger
+                        </text>
+
+                        <!-- ── MAIN AGENT BOX ── -->
+                        <rect
+                            x="155"
+                            y="60"
+                            width="620"
+                            height="310"
+                            rx="12"
+                            fill="none"
+                            stroke="#252d45"
+                            stroke-width="1.5"
+                            stroke-dasharray="5,3"
+                        />
+                        <text
+                            x="465"
+                            y="82"
+                            text-anchor="middle"
+                            fill="#3b82f6"
+                            font-size="11"
+                            font-weight="600"
+                            letter-spacing="0.1em"
+                        >
+                            CoOperator Dev Agent
+                        </text>
+
+                        <!-- REVIEW & FEEDBACK box at top -->
+                        <rect
+                            x="530"
+                            y="90"
+                            width="120"
+                            height="36"
+                            rx="8"
+                            fill="#1a2035"
+                            stroke="#252d45"
+                            stroke-width="1.2"
+                        />
+                        <text
+                            x="590"
+                            y="107"
+                            text-anchor="middle"
+                            fill="#8b97b8"
+                            font-size="9"
+                            font-weight="500"
+                        >
+                            🔍 Review &amp;
+                        </text>
+                        <text
+                            x="590"
+                            y="119"
+                            text-anchor="middle"
+                            fill="#8b97b8"
+                            font-size="9"
+                            font-weight="500"
+                        >
+                            Feedback
+                        </text>
+
+                        <!-- IMPROVEMENT box -->
+                        <rect
+                            x="330"
+                            y="90"
+                            width="110"
+                            height="32"
+                            rx="8"
+                            fill="#1a2035"
+                            stroke="#252d45"
+                            stroke-width="1.2"
+                        />
+                        <text
+                            x="385"
+                            y="111"
+                            text-anchor="middle"
+                            fill="#8b97b8"
+                            font-size="9"
+                            font-weight="500"
+                        >
+                            ⊕ Improvement
+                        </text>
+
+                        <!-- TASK boxes -->
+                        <rect
+                            x="185"
+                            y="150"
+                            width="80"
+                            height="28"
+                            rx="6"
+                            fill="#1a2035"
+                            stroke="#3b5585"
+                            stroke-width="1"
+                        />
+                        <text
+                            x="225"
+                            y="169"
+                            text-anchor="middle"
+                            fill="#7090c0"
+                            font-size="9"
+                        >
+                            ☰ Task
+                        </text>
+                        <rect
+                            x="185"
+                            y="250"
+                            width="80"
+                            height="28"
+                            rx="6"
+                            fill="#1a2035"
+                            stroke="#3b5585"
+                            stroke-width="1"
+                        />
+                        <text
+                            x="225"
+                            y="269"
+                            text-anchor="middle"
+                            fill="#7090c0"
+                            font-size="9"
+                        >
+                            ☰ Task
+                        </text>
+
+                        <!-- Arrows from tasks to Architect -->
+                        <line
+                            x1="265"
+                            y1="164"
+                            x2="285"
+                            y2="200"
+                            stroke="#3b5585"
+                            stroke-width="1.2"
+                            marker-end="url(#arr-muted)"
+                        />
+                        <line
+                            x1="265"
+                            y1="264"
+                            x2="285"
+                            y2="228"
+                            stroke="#3b5585"
+                            stroke-width="1.2"
+                            marker-end="url(#arr-muted)"
+                        />
+
+                        <!-- ARCHITECT node -->
+                        <circle
+                            cx="310"
+                            cy="215"
+                            r="32"
+                            fill="#1e2d52"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                            filter="url(#glow)"
+                        />
+                        <text
+                            x="310"
+                            y="210"
+                            text-anchor="middle"
+                            fill="#93c5fd"
+                            font-size="18"
+                        >
+                            ⬡
+                        </text>
+                        <text
+                            x="310"
+                            y="227"
+                            text-anchor="middle"
+                            fill="#e2e8f0"
+                            font-size="9.5"
+                            font-weight="600"
+                        >
+                            Architect
+                        </text>
+                        <text
+                            x="310"
+                            y="256"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                        >
+                            Output plans
+                        </text>
+
+                        <!-- Arrow Architect → Engineer1 -->
+                        <line
+                            x1="342"
+                            y1="215"
+                            x2="368"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- ENGINEER 1 (code gen) -->
+                        <circle
+                            cx="395"
+                            cy="215"
+                            r="32"
+                            fill="#1e2d52"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                            filter="url(#glow)"
+                        />
+                        <text
+                            x="395"
+                            y="210"
+                            text-anchor="middle"
+                            fill="#93c5fd"
+                            font-size="18"
+                        >
+                            ⬡
+                        </text>
+                        <text
+                            x="395"
+                            y="227"
+                            text-anchor="middle"
+                            fill="#e2e8f0"
+                            font-size="9.5"
+                            font-weight="600"
+                        >
+                            Engineer
+                        </text>
+                        <text
+                            x="395"
+                            y="256"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                            text-anchor="middle"
+                        >
+                            Generate code
+                        </text>
+                        <text
+                            x="395"
+                            y="267"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                        >
+                            for tasks
+                        </text>
+
+                        <!-- Arrow Engineer1 → Code Review -->
+                        <line
+                            x1="427"
+                            y1="215"
+                            x2="448"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- TDD label above -->
+                        <text
+                            x="437"
+                            y="198"
+                            text-anchor="middle"
+                            fill="#6080a8"
+                            font-size="7.5"
+                        >
+                            Runs tests
+                        </text>
+                        <text
+                            x="437"
+                            y="207"
+                            text-anchor="middle"
+                            fill="#6080a8"
+                            font-size="7.5"
+                        >
+                            per task (TDD)
+                        </text>
+
+                        <!-- CODE REVIEW (doc icon) -->
+                        <rect
+                            x="449"
+                            y="196"
+                            width="36"
+                            height="40"
+                            rx="5"
+                            fill="#1a2035"
+                            stroke="#3b5585"
+                            stroke-width="1.5"
+                        />
+                        <text
+                            x="467"
+                            y="222"
+                            text-anchor="middle"
+                            fill="#7090c0"
+                            font-size="16"
+                        >
+                            📄
+                        </text>
+                        <text
+                            x="467"
+                            y="246"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                        >
+                            Code review
+                        </text>
+
+                        <!-- Arrow Code Review → Engineer2 -->
+                        <line
+                            x1="485"
+                            y1="216"
+                            x2="503"
+                            y2="216"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- ENGINEER 2 (code review) -->
+                        <circle
+                            cx="530"
+                            cy="215"
+                            r="32"
+                            fill="#1e2d52"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                            filter="url(#glow)"
+                        />
+                        <text
+                            x="530"
+                            y="210"
+                            text-anchor="middle"
+                            fill="#93c5fd"
+                            font-size="18"
+                        >
+                            ⬡
+                        </text>
+                        <text
+                            x="530"
+                            y="227"
+                            text-anchor="middle"
+                            fill="#e2e8f0"
+                            font-size="9.5"
+                            font-weight="600"
+                        >
+                            Engineer
+                        </text>
+
+                        <!-- Arrow Engineer2 → QA -->
+                        <line
+                            x1="562"
+                            y1="215"
+                            x2="583"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- Acceptance tests label -->
+                        <text
+                            x="572"
+                            y="198"
+                            text-anchor="middle"
+                            fill="#6080a8"
+                            font-size="7.5"
+                        >
+                            Runs acceptance
+                        </text>
+                        <text
+                            x="572"
+                            y="207"
+                            text-anchor="middle"
+                            fill="#6080a8"
+                            font-size="7.5"
+                        >
+                            tests sequentially
+                        </text>
+
+                        <!-- QA node -->
+                        <circle
+                            cx="610"
+                            cy="215"
+                            r="32"
+                            fill="#1e2d52"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                            filter="url(#glow)"
+                        />
+                        <text
+                            x="610"
+                            y="210"
+                            text-anchor="middle"
+                            fill="#93c5fd"
+                            font-size="18"
+                        >
+                            ⬡
+                        </text>
+                        <text
+                            x="610"
+                            y="227"
+                            text-anchor="middle"
+                            fill="#e2e8f0"
+                            font-size="9.5"
+                            font-weight="600"
+                        >
+                            QA
+                        </text>
+
+                        <!-- Arrow QA → Auditor -->
+                        <line
+                            x1="642"
+                            y1="215"
+                            x2="663"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- Automated Audits label -->
+                        <text
+                            x="650"
+                            y="256"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                        >
+                            Automated
+                        </text>
+                        <text
+                            x="650"
+                            y="266"
+                            text-anchor="middle"
+                            fill="#4a6080"
+                            font-size="8"
+                        >
+                            Audits
+                        </text>
+
+                        <!-- AUDITOR node -->
+                        <circle
+                            cx="690"
+                            cy="215"
+                            r="32"
+                            fill="#1e2d52"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                            filter="url(#glow)"
+                        />
+                        <text
+                            x="690"
+                            y="210"
+                            text-anchor="middle"
+                            fill="#93c5fd"
+                            font-size="18"
+                        >
+                            ⬡
+                        </text>
+                        <text
+                            x="690"
+                            y="227"
+                            text-anchor="middle"
+                            fill="#e2e8f0"
+                            font-size="9.5"
+                            font-weight="600"
+                        >
+                            Auditor
+                        </text>
+
+                        <!-- Arrow Auditor → Sign off -->
+                        <line
+                            x1="722"
+                            y1="215"
+                            x2="742"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- Sign off label -->
+                        <text
+                            x="730"
+                            y="198"
+                            text-anchor="middle"
+                            fill="#6080a8"
+                            font-size="7.5"
+                        >
+                            Sign off
+                        </text>
+
+                        <!-- HUMAN SIGN OFF circle -->
+                        <circle
+                            cx="758"
+                            cy="215"
+                            r="22"
+                            fill="#1a2035"
+                            stroke="#0d9488"
+                            stroke-width="2"
+                        />
+                        <circle
+                            cx="758"
+                            cy="208"
+                            r="7"
+                            fill="#0d9488"
+                            opacity="0.75"
+                        />
+                        <path
+                            d="M742,228 Q758,218 774,228"
+                            fill="#0d9488"
+                            opacity="0.55"
+                        />
+
+                        <!-- Arrow Sign off → Story complete -->
+                        <line
+                            x1="780"
+                            y1="215"
+                            x2="800"
+                            y2="215"
+                            stroke="#3b82f6"
+                            stroke-width="1.5"
+                            marker-end="url(#arr)"
+                        />
+
+                        <!-- STORY COMPLETE box -->
+                        <rect
+                            x="800"
+                            y="196"
+                            width="88"
+                            height="38"
+                            rx="8"
+                            fill="#1a2035"
+                            stroke="#10b981"
+                            stroke-width="1.5"
+                        />
+                        <text
+                            x="844"
+                            y="211"
+                            text-anchor="middle"
+                            fill="#34d399"
+                            font-size="8.5"
+                            font-weight="600"
+                        >
+                            ✓ Story
+                        </text>
+                        <text
+                            x="844"
+                            y="224"
+                            text-anchor="middle"
+                            fill="#34d399"
+                            font-size="8.5"
+                            font-weight="600"
+                        >
+                            Complete
+                        </text>
+
+                        <!-- ISSUE box at bottom -->
+                        <rect
+                            x="430"
+                            y="310"
+                            width="80"
+                            height="28"
+                            rx="7"
+                            fill="#1a2035"
+                            stroke="#7c3aed"
+                            stroke-width="1.2"
+                        />
+                        <text
+                            x="470"
+                            y="329"
+                            text-anchor="middle"
+                            fill="#a78bfa"
+                            font-size="9"
+                        >
+                            ⚠ Issue
+                        </text>
+
+                        <!-- Issue loop arrow back to Architect area -->
+                        <path
+                            d="M430,324 Q310,360 310,250"
+                            fill="none"
+                            stroke="#7c3aed"
+                            stroke-width="1.2"
+                            stroke-dasharray="4,3"
+                            marker-end="url(#arr-muted)"
+                        />
+
+                        <!-- Improvement arrow: from improvement box to Architect -->
+                        <path
+                            d="M330,106 Q265,106 265,150"
+                            fill="none"
+                            stroke="#4a6080"
+                            stroke-width="1"
+                            stroke-dasharray="3,3"
+                            marker-end="url(#arr-muted)"
+                        />
+
+                        <!-- Review & Feedback arrow: from review box back -->
+                        <path
+                            d="M530,108 Q510,90 395,90 Q310,90 310,142"
+                            fill="none"
+                            stroke="#4a6080"
+                            stroke-width="1"
+                            stroke-dasharray="3,3"
+                            marker-end="url(#arr-muted)"
+                        />
+                    </svg>
+
+                    <!-- POST-COMPLETION side -->
+                    <div
+                        style="
+                            margin-top: 24px;
+                            border-top: 1px solid #252d45;
+                            padding-top: 24px;
+                        "
+                    >
+                        <p
+                            style="
+                                text-align: center;
+                                font-size: 11px;
+                                letter-spacing: 0.12em;
+                                text-transform: uppercase;
+                                color: #3b82f6;
+                                font-weight: 600;
+                                margin-bottom: 18px;
+                            "
+                        >
+                            Post-Completion Process — Recursive Self-Improvement
+                        </p>
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: center;
+                                gap: 0;
+                                align-items: center;
+                                flex-wrap: wrap;
+                            "
+                        >
+                            <div
+                                style="
+                                    text-align: center;
+                                    width: 160px;
+                                    padding: 0 12px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 48px;
+                                        height: 48px;
+                                        border-radius: 50%;
+                                        background: #1a2035;
+                                        border: 2px solid #3b82f6;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin: 0 auto 10px;
+                                        font-size: 20px;
+                                    "
+                                >
+                                    ＋
+                                </div>
+                                <p
+                                    style="
+                                        font-size: 12px;
+                                        color: #e2e8f0;
+                                        font-weight: 500;
+                                        line-height: 1.4;
+                                    "
+                                >
+                                    Creates New Internal Story
+                                </p>
+                                <p
+                                    style="
+                                        font-size: 11px;
+                                        color: #4a6080;
+                                        margin-top: 4px;
+                                    "
+                                >
+                                    (Tech Debt)
+                                </p>
+                            </div>
+
+                            <div
+                                style="
+                                    color: #3b82f6;
+                                    font-size: 20px;
+                                    padding: 0 6px;
+                                "
+                            >
+                                →
+                            </div>
+
+                            <div
+                                style="
+                                    text-align: center;
+                                    width: 160px;
+                                    padding: 0 12px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 48px;
+                                        height: 48px;
+                                        border-radius: 50%;
+                                        background: #1a2035;
+                                        border: 2px solid #3b82f6;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin: 0 auto 10px;
+                                        font-size: 20px;
+                                    "
+                                >
+                                    ↑
+                                </div>
+                                <p
+                                    style="
+                                        font-size: 12px;
+                                        color: #e2e8f0;
+                                        font-weight: 500;
+                                        line-height: 1.4;
+                                    "
+                                >
+                                    Identifies Improvement Opportunities
+                                </p>
+                            </div>
+
+                            <div
+                                style="
+                                    color: #3b82f6;
+                                    font-size: 20px;
+                                    padding: 0 6px;
+                                "
+                            >
+                                →
+                            </div>
+
+                            <div
+                                style="
+                                    text-align: center;
+                                    width: 160px;
+                                    padding: 0 12px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 48px;
+                                        height: 48px;
+                                        border-radius: 50%;
+                                        background: #1a2035;
+                                        border: 2px solid #3b82f6;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin: 0 auto 10px;
+                                        font-size: 20px;
+                                    "
+                                >
+                                    📄
+                                </div>
+                                <p
+                                    style="
+                                        font-size: 12px;
+                                        color: #e2e8f0;
+                                        font-weight: 500;
+                                        line-height: 1.4;
+                                    "
+                                >
+                                    Agent Reviews All Human Feedback
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NOTES -->
+            <section>
+                <h2 class="section-title">Key Takeaways</h2>
+                <div class="notes-grid">
+                    <!-- Spec & Handoff -->
+                    <div class="note-card accent">
+                        <p class="card-label">
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <rect
+                                    x="2"
+                                    y="2"
+                                    width="12"
+                                    height="12"
+                                    rx="2"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                />
+                                <path
+                                    d="M5 8h6M5 5h6M5 11h4"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
+                            Specification as First Handoff
+                        </p>
+                        <ul>
+                            <li>
+                                PMs use AI (Claude Code) to create
+                                well-structured specifications — this is the
+                                <strong>critical human-to-AI handoff</strong>
+                            </li>
+                            <li>
+                                Specs were reviewed and reformatted first to
+                                establish the right format before agents could
+                                use them
+                            </li>
+                            <li>
+                                Quality of spec directly determines quality of
+                                agent output — garbage in, garbage out
+                            </li>
+                        </ul>
+                        <div class="highlight-box">
+                            The spec is where human intent gets translated into
+                            machine-executable context.
+                        </div>
+                    </div>
+
+                    <!-- Human Checkpoints -->
+                    <div class="note-card">
+                        <p class="card-label">
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <circle
+                                    cx="8"
+                                    cy="8"
+                                    r="6"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                />
+                                <path
+                                    d="M5 8l2 2 4-4"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Evolving Human Checkpoints
+                        </p>
+                        <ul>
+                            <li>
+                                Initially: humans reviewed every plan as a
+                                checkpoint before agent proceeded
+                            </li>
+                            <li>
+                                Checkpoints were progressively removed as agent
+                                plans proved consistently good
+                            </li>
+                            <li>
+                                Current bottleneck:
+                                <strong>human code reviews</strong> — the plan
+                                is to eliminate these entirely
+                            </li>
+                            <li>
+                                Reviews today serve one purpose:
+                                <em>fixing the agents, not the code</em>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Killing Old Processes -->
+                    <div class="note-card">
+                        <p class="card-label">
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <path
+                                    d="M3 8h10M8 3v10"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
+                            Killing Old Processes
+                        </p>
+                        <ul>
+                            <li>
+                                <strong
+                                    >No one allowed to write code by end of
+                                    year</strong
+                                >
+                                — incremental human coding is too slow
+                            </li>
+                            <li>
+                                Cloud-hosted agents automatically pick up
+                                stories from the backlog
+                            </li>
+                            <li>
+                                Developers shifted from writing code → improving
+                                agents to perform better
+                            </li>
+                            <li>
+                                Daily releases Mon–Thu enabled by autonomous
+                                workflows
+                            </li>
+                        </ul>
+                        <div style="margin-top: 12px">
+                            <span class="tag amber">Big shift</span>
+                            <span class="tag">Agent-first</span>
+                            <span class="tag green">Daily deploys</span>
+                        </div>
+                    </div>
+
+                    <!-- Hallucinations -->
+                    <div class="note-card">
+                        <p class="card-label">
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <path
+                                    d="M8 2v4M8 10v4M2 8h4M10 8h4"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
+                            Handling Hallucinations
+                        </p>
+                        <ul>
+                            <li>
+                                Hallucinations occur when there is
+                                <strong>insufficient context</strong> or context
+                                window is exhausted
+                            </li>
+                            <li>
+                                Solution: work
+                                <strong
+                                    >iteratively with separate, focused
+                                    agents</strong
+                                >
+                                — don't give one agent too much scope
+                            </li>
+                            <li>
+                                Smaller task slices = more reliable, less
+                                hallucinatory output
+                            </li>
+                        </ul>
+                        <div class="highlight-box">
+                            TDD is the safety net — a junior developer on day
+                            one should be able to build a feature and ship with
+                            tests in place.
+                        </div>
+                    </div>
+
+                    <!-- Where to Start -->
+                    <div class="note-card full">
+                        <p class="card-label">
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <path
+                                    d="M3 12L8 4l5 8H3z"
+                                    stroke="#60a5fa"
+                                    stroke-width="1.5"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Where Should Other Organizations Start?
+                        </p>
+                        <div
+                            style="
+                                display: grid;
+                                grid-template-columns: 1fr 1fr 1fr;
+                                gap: 16px;
+                                margin-top: 4px;
+                            "
+                        >
+                            <div>
+                                <p
+                                    style="
+                                        color: #60a5fa;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        margin-bottom: 8px;
+                                    "
+                                >
+                                    Mindset
+                                </p>
+                                <ul>
+                                    <li>
+                                        Lead by example — show, don't just tell
+                                    </li>
+                                    <li>
+                                        Don't delegate AI adoption, start
+                                        yourself now
+                                    </li>
+                                    <li>Don't be scared to experiment</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p
+                                    style="
+                                        color: #60a5fa;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        margin-bottom: 8px;
+                                    "
+                                >
+                                    Approach by Org Size
+                                </p>
+                                <ul>
+                                    <li>
+                                        Small org →
+                                        <strong>top-down</strong> mandate works
+                                        best
+                                    </li>
+                                    <li>
+                                        Large org →
+                                        <strong>bottom-up</strong> grassroots
+                                        adoption
+                                    </li>
+                                    <li>
+                                        Use the latest tools as much as possible
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p
+                                    style="
+                                        color: #60a5fa;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        margin-bottom: 8px;
+                                    "
+                                >
+                                    Engineering
+                                </p>
+                                <ul>
+                                    <li>
+                                        TDD as the foundation for agent-safe
+                                        shipping
+                                    </li>
+                                    <li>
+                                        Fix the agent context, not the code
+                                        output
+                                    </li>
+                                    <li>
+                                        Separate agents per task to avoid
+                                        context overflow
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUOTE -->
+            <blockquote class="big-quote">
+                "Reviews are not meant for fixing the code — they're meant for
+                fixing the agents."
+                <cite>— Alexander Alexiev, CTO, AMPECO</cite>
+            </blockquote>
+        </div>
+    </body>
+</html>
