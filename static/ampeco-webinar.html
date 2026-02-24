@@ -24,6 +24,93 @@
                 --agent-ring: #3b82f6;
                 --human-teal: #0d9488;
                 --success: #10b981;
+                --heading: #ffffff;
+                --header-bg: linear-gradient(
+                    135deg,
+                    #0f1729 0%,
+                    #111c35 60%,
+                    #0d1520 100%
+                );
+                --header-glow: rgba(59, 130, 246, 0.12);
+                --quote-text: #c7d4f0;
+                --tag-green-text: #34d399;
+                --tag-green-bg: rgba(16, 185, 129, 0.1);
+                --tag-green-border: rgba(16, 185, 129, 0.25);
+                --tag-amber-text: #fbbf24;
+                --tag-amber-bg: rgba(245, 158, 11, 0.1);
+                --tag-amber-border: rgba(245, 158, 11, 0.25);
+                --accent-card-bg: linear-gradient(
+                    135deg,
+                    var(--card) 0%,
+                    rgba(37, 99, 235, 0.08) 100%
+                );
+                --slide-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                --diagram-surface: #131827;
+                --diagram-stroke: #252d45;
+                --diagram-text: #e2e8f0;
+                --diagram-muted-text: #8b97b8;
+                --diagram-agent-fill: #1e3a5f;
+                --diagram-agent-stroke: #3b82f6;
+                --diagram-human-fill: #134e48;
+                --diagram-human-stroke: #0d9488;
+                --diagram-arrow-fill: #3b82f6;
+                --diagram-arrow-muted: #4a5a80;
+                --diagram-lane-fill: rgba(59, 130, 246, 0.04);
+                --diagram-lane-stroke: rgba(59, 130, 246, 0.12);
+                --pill-bg: var(--tag-bg);
+                --pill-border: rgba(59, 130, 246, 0.25);
+            }
+
+            html.light {
+                --bg: #f8fafc;
+                --surface: #ffffff;
+                --card: #ffffff;
+                --border: #e2e8f0;
+                --accent: #2563eb;
+                --accent2: #1d4ed8;
+                --accent-glow: rgba(37, 99, 235, 0.08);
+                --text: #1e293b;
+                --muted: #64748b;
+                --tag-bg: rgba(37, 99, 235, 0.06);
+                --agent-blue: #2563eb;
+                --agent-ring: #3b82f6;
+                --human-teal: #0d9488;
+                --success: #059669;
+                --heading: #0f172a;
+                --header-bg: linear-gradient(
+                    135deg,
+                    #e0e7ff 0%,
+                    #eff6ff 60%,
+                    #f0f9ff 100%
+                );
+                --header-glow: rgba(59, 130, 246, 0.06);
+                --quote-text: #334155;
+                --tag-green-text: #059669;
+                --tag-green-bg: rgba(16, 185, 129, 0.08);
+                --tag-green-border: rgba(16, 185, 129, 0.3);
+                --tag-amber-text: #d97706;
+                --tag-amber-bg: rgba(245, 158, 11, 0.08);
+                --tag-amber-border: rgba(245, 158, 11, 0.3);
+                --accent-card-bg: linear-gradient(
+                    135deg,
+                    #ffffff 0%,
+                    rgba(37, 99, 235, 0.04) 100%
+                );
+                --slide-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                --diagram-surface: #f8fafc;
+                --diagram-stroke: #cbd5e1;
+                --diagram-text: #1e293b;
+                --diagram-muted-text: #64748b;
+                --diagram-agent-fill: #dbeafe;
+                --diagram-agent-stroke: #3b82f6;
+                --diagram-human-fill: #ccfbf1;
+                --diagram-human-stroke: #0d9488;
+                --diagram-arrow-fill: #2563eb;
+                --diagram-arrow-muted: #94a3b8;
+                --diagram-lane-fill: rgba(59, 130, 246, 0.04);
+                --diagram-lane-stroke: rgba(59, 130, 246, 0.15);
+                --pill-bg: rgba(37, 99, 235, 0.06);
+                --pill-border: rgba(37, 99, 235, 0.2);
             }
 
             * {
@@ -43,12 +130,7 @@
 
             /* ── HEADER ── */
             header {
-                background: linear-gradient(
-                    135deg,
-                    #0f1729 0%,
-                    #111c35 60%,
-                    #0d1520 100%
-                );
+                background: var(--header-bg);
                 border-bottom: 1px solid var(--border);
                 padding: 52px 60px 44px;
                 position: relative;
@@ -63,7 +145,7 @@
                 height: 400px;
                 background: radial-gradient(
                     circle,
-                    rgba(59, 130, 246, 0.12) 0%,
+                    var(--header-glow) 0%,
                     transparent 70%
                 );
                 pointer-events: none;
@@ -98,7 +180,7 @@
                 font-family: "DM Serif Display", serif;
                 font-size: 38px;
                 line-height: 1.2;
-                color: #fff;
+                color: var(--heading);
                 max-width: 640px;
                 margin-bottom: 16px;
             }
@@ -113,8 +195,8 @@
                 margin-top: 8px;
             }
             .meta-pill {
-                background: var(--tag-bg);
-                border: 1px solid rgba(59, 130, 246, 0.25);
+                background: var(--pill-bg);
+                border: 1px solid var(--pill-border);
                 color: var(--accent2);
                 border-radius: 100px;
                 padding: 4px 14px;
@@ -136,7 +218,7 @@
             .section-title {
                 font-family: "DM Serif Display", serif;
                 font-size: 22px;
-                color: #fff;
+                color: var(--heading);
                 margin-bottom: 24px;
                 display: flex;
                 align-items: center;
@@ -201,11 +283,7 @@
             }
             .note-card.accent {
                 border-color: rgba(59, 130, 246, 0.3);
-                background: linear-gradient(
-                    135deg,
-                    var(--card) 0%,
-                    rgba(37, 99, 235, 0.08) 100%
-                );
+                background: var(--accent-card-bg);
             }
 
             .card-label {
@@ -269,14 +347,14 @@
                 margin-bottom: 4px;
             }
             .tag.green {
-                background: rgba(16, 185, 129, 0.1);
-                border-color: rgba(16, 185, 129, 0.25);
-                color: #34d399;
+                background: var(--tag-green-bg);
+                border-color: var(--tag-green-border);
+                color: var(--tag-green-text);
             }
             .tag.amber {
-                background: rgba(245, 158, 11, 0.1);
-                border-color: rgba(245, 158, 11, 0.25);
-                color: #fbbf24;
+                background: var(--tag-amber-bg);
+                border-color: var(--tag-amber-border);
+                color: var(--tag-amber-text);
             }
 
             /* ── QUOTE ── */
@@ -289,7 +367,7 @@
                 margin-top: 56px;
                 font-family: "DM Serif Display", serif;
                 font-size: 20px;
-                color: #c7d4f0;
+                color: var(--quote-text);
                 font-style: italic;
                 line-height: 1.5;
             }
@@ -301,9 +379,83 @@
                 color: var(--muted);
                 margin-top: 14px;
             }
+            /* ── THEME TOGGLE ── */
+            .theme-toggle {
+                position: fixed;
+                top: 18px;
+                right: 24px;
+                z-index: 1000;
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                color: var(--muted);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                transition:
+                    border-color 0.2s,
+                    background 0.2s,
+                    color 0.2s;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
+            .theme-toggle:hover {
+                border-color: var(--accent);
+                color: var(--accent2);
+            }
+            .theme-toggle .icon-sun,
+            .theme-toggle .icon-moon {
+                display: none;
+            }
+            html.light .theme-toggle .icon-moon {
+                display: block;
+            }
+            html:not(.light) .theme-toggle .icon-sun {
+                display: block;
+            }
+
+            /* ── LIGHT MODE: card shadows ── */
+            html.light .note-card {
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            }
+            html.light .diagram-wrap {
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            }
+            html.light .big-quote {
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            }
+
+            /* ── LIGHT MODE: SVG diagram inversion ── */
+            html.light .process-diagram {
+                filter: invert(0.88) hue-rotate(180deg) saturate(1.8);
+            }
+            html.light .diagram-wrap {
+                background: var(--surface);
+            }
         </style>
+        <script>
+            /* Apply theme BEFORE paint to avoid flash */
+            (function () {
+                var t = localStorage.getItem("theme");
+                if (t === "light")
+                    document.documentElement.classList.add("light");
+            })();
+        </script>
     </head>
     <body>
+        <!-- Theme toggle button -->
+        <button
+            class="theme-toggle"
+            id="themeToggle"
+            aria-label="Toggle light/dark mode"
+        >
+            <span class="icon-sun">☀️</span>
+            <span class="icon-moon">🌙</span>
+        </button>
+
         <header>
             <div class="container">
                 <a href="index.html" class="back-link">
@@ -1607,5 +1759,17 @@
                 <cite>— Alexander Alexiev, CTO, AMPECO</cite>
             </blockquote>
         </div>
+
+        <script>
+            (function () {
+                var toggle = document.getElementById("themeToggle");
+                toggle.addEventListener("click", function () {
+                    document.documentElement.classList.toggle("light");
+                    var isLight =
+                        document.documentElement.classList.contains("light");
+                    localStorage.setItem("theme", isLight ? "light" : "dark");
+                });
+            })();
+        </script>
     </body>
 </html>

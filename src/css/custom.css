@@ -1,0 +1,153 @@
+/* Custom theme overrides for the Knowledge Base */
+
+:root {
+  --ifm-color-primary: #3b82f6;
+  --ifm-color-primary-dark: #2563eb;
+  --ifm-color-primary-darker: #1d4ed8;
+  --ifm-color-primary-darkest: #1e40af;
+  --ifm-color-primary-light: #60a5fa;
+  --ifm-color-primary-lighter: #93bbfd;
+  --ifm-color-primary-lightest: #bfdbfe;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: "DM Sans", system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-family: "DM Serif Display", Georgia, serif;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93bbfd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+  --ifm-background-color: #0c0f1a;
+  --ifm-background-surface-color: #131827;
+  --ifm-navbar-background-color: #0f1729;
+  --ifm-footer-background-color: #0c0f1a;
+  --ifm-card-background-color: #1a2035;
+  --ifm-toc-border-color: #252d45;
+  --ifm-color-emphasis-300: #252d45;
+  --ifm-menu-color: #8b97b8;
+  --ifm-menu-color-active: #60a5fa;
+  --ifm-font-color-base: #e2e8f0;
+  --ifm-heading-color: #ffffff;
+  --docusaurus-highlighted-code-line-bg: rgba(59, 130, 246, 0.15);
+}
+
+/* Import DM Sans and DM Serif Display from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap");
+
+/* ── Global typography ── */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--ifm-heading-font-family);
+}
+
+/* ── Navbar tweaks ── */
+.navbar {
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  box-shadow: none;
+}
+
+.navbar__title {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.15rem;
+}
+
+/* ── Sidebar tweaks ── */
+.menu__link {
+  font-size: 0.9rem;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="dark"] .menu__link:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+/* ── Docs page ── */
+.markdown h1:first-child {
+  font-size: 2.2rem;
+}
+
+.markdown h2 {
+  font-size: 1.6rem;
+  margin-top: 2.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.markdown h3 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+}
+
+/* ── Code blocks ── */
+[data-theme="dark"] .prism-code {
+  background-color: #131827 !important;
+  border: 1px solid #252d45;
+}
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+.footer__title {
+  font-family: var(--ifm-heading-font-family);
+}
+
+/* ── Admonitions (callouts) ── */
+[data-theme="dark"] .alert {
+  border-left-width: 4px;
+}
+
+/* ── Tables ── */
+[data-theme="dark"] table {
+  border-collapse: collapse;
+}
+
+[data-theme="dark"] th {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+[data-theme="dark"] tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Search bar in navbar ── */
+.DocSearch-Button {
+  border-radius: 10px !important;
+}
+
+[data-theme="dark"] .DocSearch-Button {
+  background-color: #131827 !important;
+  border: 1px solid #252d45 !important;
+}
+
+/* ── Scrollbar styling for dark mode ── */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0c0f1a;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #252d45;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
