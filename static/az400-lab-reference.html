@@ -702,7 +702,7 @@
       Home
     </a>
     <div class="site-title">AZ-400 Lab Reference Guide</div>
-    <div class="site-subtitle">15 Exercises · Both Weeks · Task + MCQ Format</div>
+    <div class="site-subtitle">19 Exercises · Both Weeks · Task + MCQ Format</div>
   </div>
   <div class="header-right">
     <div class="badge-row">
@@ -736,6 +736,8 @@
     <a class="sidebar-item" href="#ex7"><span class="ex-num">07</span>GitHub Actions Workflow</a>
     <a class="sidebar-item" href="#ex8"><span class="ex-num">08</span>GitHub Environments + Approvals</a>
     <a class="sidebar-item" href="#ex9"><span class="ex-num">09</span>GHAS — Secret Scanning</a>
+    <a class="sidebar-item" href="#ex16"><span class="ex-num">16</span>Debug a Failing Pipeline</a>
+    <a class="sidebar-item" href="#ex17"><span class="ex-num">17</span>Snyk Dependency Scan</a>
 
     <div class="sidebar-section">Week 2 — Azure</div>
     <span class="sidebar-item week-header">Cloud Resources</span>
@@ -745,6 +747,8 @@
     <a class="sidebar-item" href="#ex13"><span class="ex-num">13</span>Key Vault + Pipeline Secrets</a>
     <a class="sidebar-item" href="#ex14"><span class="ex-num">14</span>Service Connection (WIF/OIDC)</a>
     <a class="sidebar-item" href="#ex15"><span class="ex-num">15</span>Container Image Scan + Push to ACR</a>
+    <a class="sidebar-item" href="#ex18"><span class="ex-num">18</span>ARM Template Deployment</a>
+    <a class="sidebar-item" href="#ex19"><span class="ex-num">19</span>Kubernetes Deploy to AKS</a>
   </nav>
 
   <!-- MAIN -->
@@ -760,6 +764,8 @@
       <div class="progress-dot w1"></div><div class="progress-dot w1"></div><div class="progress-dot w1"></div>
       <div class="progress-dot w2"></div><div class="progress-dot w2"></div><div class="progress-dot w2"></div>
       <div class="progress-dot w2"></div><div class="progress-dot w2"></div><div class="progress-dot w2"></div>
+      <div class="progress-dot w1"></div><div class="progress-dot w1"></div>
+      <div class="progress-dot w2"></div><div class="progress-dot w2"></div>
     </div>
 
     <!-- WEEK 1 BANNER -->
@@ -1327,6 +1333,136 @@
     </section>
     <hr class="divider">
 
+    <!-- ============================================================ -->
+    <!-- EX 16 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex16">
+      <div class="ex-header">
+        <div class="ex-number">EX 16</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Debug a Failing YAML Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-blue">Diagnostics</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>A pipeline is failing mid-run with a cryptic <em>"Exit code 1"</em> error and the default logs don't show why. Enable verbose agent diagnostics, read the structured log output to identify the root cause, and fix the pipeline. You must know which variable enables verbose logging and where to find agent diagnostic logs after a run.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Enable verbose logging via system.debug</strong><span>Set the pipeline variable <code>system.debug</code> to <code>true</code>. You can do this in three ways: add it as a pipeline variable in the UI, pass it as a runtime variable when queuing the run, or hardcode it in the YAML (remove before merging).</span></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="cm"># Hardcode for a debug run — remove after diagnosing</span>
+<span class="kw">variables</span>:
+  <span class="kw">system.debug</span>: <span class="str">true</span>
+
+<span class="kw">steps</span>:
+  - <span class="kw">script</span>: <span class="str">./build.sh</span>
+    <span class="kw">displayName</span>: <span class="str">Build</span></pre></div>
+        <ol class="steps-list" start="2">
+          <li><div class="step-content"><strong>Re-run the pipeline and read the verbose logs</strong><span>Open the failing step in the pipeline run. With <code>system.debug: true</code>, each task logs every input, environment variable, and sub-command. Look for lines prefixed with <code>##[debug]</code> — these show what the agent is actually executing.</span></div></li>
+          <li><div class="step-content"><strong>Download agent diagnostic logs</strong><span>In the pipeline run view → three-dot menu → Download logs. The zip contains <code>Worker_*.log</code> per job. These include agent-level errors that never appear in the step UI — useful for infrastructure problems (proxy, network, disk space).</span></div></li>
+          <li><div class="step-content"><strong>Common root causes revealed by verbose logging</strong><span>Wrong working directory, missing environment variable, tool not on PATH, script line-ending issues (CRLF vs LF), or a task silently swallowing an error code.</span></div></li>
+          <li><div class="step-content"><strong>Fix and remove system.debug</strong><span>Once the root cause is identified and fixed, remove <code>system.debug: true</code> — verbose logs significantly slow down runs and produce excessive output in production.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">A pipeline step fails with "Exit code: 1" and the standard logs show nothing useful. Which action provides the most detailed diagnostic output without modifying the pipeline YAML?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Add <code>set -x</code> to every bash script in the pipeline</div>
+          <div class="option correct"><span class="opt-label">B</span> Queue a new run and set the runtime variable <code>system.debug</code> to <code>true</code></div>
+          <div class="option wrong"><span class="opt-label">C</span> Edit the agent's <code>_diag</code> folder configuration on the build server</div>
+          <div class="option wrong"><span class="opt-label">D</span> Enable "Verbose" in the pipeline's Triggers settings</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> <code>system.debug</code> can be passed as a runtime variable when queuing a run — no YAML change required. It enables <code>##[debug]</code> level output for every task, revealing exact inputs, environment variables, and sub-commands. Option A only helps for bash scripts you control, not for task-level issues. Option D doesn't exist.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          <code>system.debug: true</code> is not the same as <code>agent.diagnostic: true</code>. The former enables verbose task logging in the UI; the latter enables agent-level Worker logs (stored in the <code>_diag</code> folder on self-hosted agents, downloadable on Microsoft-hosted). Both are useful for different failure types.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 17 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex17">
+      <div class="ex-header">
+        <div class="ex-number">EX 17</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Add a Snyk Dependency Security Scan to a Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Snyk</span>
+            <span class="badge badge-blue">Security</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Add a Snyk open-source dependency scan to an existing Azure Pipeline. The pipeline must <strong>fail the build</strong> if any <strong>high or critical</strong> severity vulnerability is found in the project's dependencies. Use a Snyk API token stored as a pipeline secret variable — never hardcoded in YAML. (Snyk is free for open-source public repos.)</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Install the Snyk extension</strong><span>Go to <em>marketplace.visualstudio.com</em> → search "Snyk Security" → Install into your Azure DevOps organisation. This adds the <code>SnykSecurityScan@1</code> task.</span></div></li>
+          <li><div class="step-content"><strong>Create a Snyk API token secret</strong><span>Sign up at snyk.io (free). Account Settings → API Token → copy. In Azure DevOps: Pipeline → Edit → Variables → Add variable named <code>SNYK_TOKEN</code>, paste the token, check <em>Keep this value secret</em>.</span></div></li>
+          <li><div class="step-content"><strong>Add the scan task to your pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">NodeTool@0</span>      <span class="cm"># Ensure correct runtime is present</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">versionSpec</span>: <span class="str">20.x</span>
+
+  - <span class="kw">script</span>: <span class="str">npm ci</span>         <span class="cm"># Install deps so Snyk can read the lockfile</span>
+
+  - <span class="kw">task</span>: <span class="str">SnykSecurityScan@1</span>
+    <span class="kw">displayName</span>: <span class="str">Snyk — Dependency Vulnerability Scan</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">serviceConnectionEndpoint</span>: <span class="str">snyk-connection</span>  <span class="cm"># Or use token directly:</span>
+      <span class="kw">testType</span>: <span class="str">app</span>
+      <span class="kw">severityThreshold</span>: <span class="str">high</span>     <span class="cm"># Fail on HIGH or CRITICAL only</span>
+      <span class="kw">failOnIssues</span>: <span class="kw">true</span>
+      <span class="kw">monitorWhen</span>: <span class="str">always</span>         <span class="cm"># Report to Snyk dashboard on every run</span>
+
+  - <span class="kw">script</span>: <span class="str">npm run build</span>   <span class="cm"># Only runs if Snyk scan passed</span></pre></div>
+        <ol class="steps-list" start="4">
+          <li><div class="step-content"><strong>Verify the gate works</strong><span>Introduce a known-vulnerable package version (e.g. <code>lodash@4.17.4</code> in <code>package.json</code>) and push. The pipeline must fail at the Snyk step. Fix the version to the patched release and confirm the pipeline passes.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">You add <code>SnykSecurityScan@1</code> with <code>severityThreshold: high</code> and <code>failOnIssues: true</code> to your pipeline. The scan finds 3 medium-severity and 1 high-severity vulnerabilities. What is the pipeline outcome?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Pipeline passes — medium issues are reported but don't count against the threshold</div>
+          <div class="option correct"><span class="opt-label">B</span> Pipeline fails — the 1 high-severity vulnerability meets the <code>severityThreshold: high</code> condition and <code>failOnIssues: true</code> triggers a build failure</div>
+          <div class="option wrong"><span class="opt-label">C</span> Pipeline fails — any vulnerability at any severity causes failure when <code>failOnIssues: true</code></div>
+          <div class="option wrong"><span class="opt-label">D</span> Pipeline pauses and waits for a security team approval before continuing</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> <code>severityThreshold: high</code> means Snyk only counts issues rated HIGH or CRITICAL toward the failure condition. The 3 medium vulnerabilities are reported but ignored by the gate. The 1 high-severity issue triggers <code>failOnIssues: true</code>, failing the pipeline. Option C is wrong — without a threshold, all severities would count, but a threshold explicitly narrows the scope.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          Dependencies must be installed (<code>npm ci</code> / <code>pip install</code> / etc.) <em>before</em> the Snyk task runs, or Snyk cannot read the resolved dependency tree. Running Snyk on the manifest alone (without a lockfile) may miss transitive vulnerabilities entirely.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
     <!-- WEEK 2 BANNER -->
     <div class="week-banner w2">
       <span class="week-banner-icon">☁️</span>
@@ -1733,6 +1869,210 @@
         </div>
       </div>
     </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 18 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex18">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 18</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Deploy ARM Template via Azure Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">ARM Templates</span>
+            <span class="badge badge-orange">IaC</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an ARM JSON template that provisions an Azure Storage Account, then deploy it via an Azure Pipeline using the <code>AzureResourceManagerTemplateDeployment@3</code> task. The deployment must target a specific resource group, use incremental mode, and pass the storage account name as a parameter — not hardcoded in the template.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Create the ARM template (azuredeploy.json)</strong><span>Commit this to your repo root. ARM JSON always requires <code>$schema</code>, <code>contentVersion</code>, <code>parameters</code>, and <code>resources</code>.</span></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="cm">// azuredeploy.json</span>
+{
+  <span class="str">"$schema"</span>: <span class="str">"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#"</span>,
+  <span class="str">"contentVersion"</span>: <span class="str">"1.0.0.0"</span>,
+  <span class="str">"parameters"</span>: {
+    <span class="str">"storageAccountName"</span>: {
+      <span class="str">"type"</span>: <span class="str">"string"</span>,
+      <span class="str">"minLength"</span>: <span class="num">3</span>,
+      <span class="str">"maxLength"</span>: <span class="num">24</span>
+    }
+  },
+  <span class="str">"resources"</span>: [
+    {
+      <span class="str">"type"</span>: <span class="str">"Microsoft.Storage/storageAccounts"</span>,
+      <span class="str">"apiVersion"</span>: <span class="str">"2023-01-01"</span>,
+      <span class="str">"name"</span>: <span class="str">"[parameters('storageAccountName')]"</span>,
+      <span class="str">"location"</span>: <span class="str">"[resourceGroup().location]"</span>,
+      <span class="str">"sku"</span>: { <span class="str">"name"</span>: <span class="str">"Standard_LRS"</span> },
+      <span class="str">"kind"</span>: <span class="str">"StorageV2"</span>
+    }
+  ]
+}</pre></div>
+        <ol class="steps-list week2" start="2">
+          <li><div class="step-content"><strong>Create the pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">AzureResourceManagerTemplateDeployment@3</span>
+    <span class="kw">displayName</span>: <span class="str">Deploy Storage Account ARM Template</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">deploymentScope</span>: <span class="str">Resource Group</span>
+      <span class="kw">azureResourceManagerConnection</span>: <span class="str">azure-wif-connection</span>
+      <span class="kw">subscriptionId</span>: <span class="str">$(subscriptionId)</span>
+      <span class="kw">action</span>: <span class="str">Create Or Update Resource Group</span>
+      <span class="kw">resourceGroupName</span>: <span class="str">rg-lab-demo</span>
+      <span class="kw">location</span>: <span class="str">eastus</span>
+      <span class="kw">templateLocation</span>: <span class="str">Linked artifact</span>
+      <span class="kw">csmFile</span>: <span class="str">azuredeploy.json</span>
+      <span class="kw">deploymentMode</span>: <span class="str">Incremental</span>       <span class="cm"># Safe: only adds/updates, never deletes</span>
+      <span class="kw">overrideParameters</span>: <span class="str">-storageAccountName mystoragelab$(Build.BuildId)</span></pre></div>
+        <ol class="steps-list week2" start="3">
+          <li><div class="step-content"><strong>Verify in Azure Portal</strong><span>Resource Groups → rg-lab-demo → your storage account appears with the build ID suffix. Run the pipeline again — incremental mode means the existing resource is updated, not replaced.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">You deploy an ARM template in <strong>Incremental</strong> mode to a resource group that already contains a storage account not in your template. What happens to that storage account?</div>
+        <div class="options">
+          <div class="option correct"><span class="opt-label">A</span> It is left untouched — Incremental mode only adds or updates resources declared in the template</div>
+          <div class="option wrong"><span class="opt-label">B</span> It is deleted — ARM removes any resource in the group not present in the template</div>
+          <div class="option wrong"><span class="opt-label">C</span> The deployment fails — ARM requires all existing resources to be declared in the template</div>
+          <div class="option wrong"><span class="opt-label">D</span> It is tagged as "unmanaged" but remains running</div>
+        </div>
+        <div class="explanation">
+          <strong>A is correct.</strong> Incremental mode (the safe default) only reconciles resources that are <em>declared</em> in the template — it adds missing ones and updates existing ones. Resources already in the resource group but absent from the template are ignored entirely. Complete mode is the destructive alternative: it deletes any resource in the group not present in the template.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          The exam frequently tests Incremental vs Complete mode. Complete mode is the one that deletes undeclared resources — it is <em>not</em> the default and must be explicitly set with <code>deploymentMode: Complete</code>. Using Complete mode accidentally in a shared resource group will delete resources you didn't intend to touch.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 19 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex19">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 19</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Deploy a Containerised App to AKS via Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">AKS</span>
+            <span class="badge badge-orange">Kubernetes</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create a pipeline that builds a Docker image, pushes it to Azure Container Registry, then deploys it to an Azure Kubernetes Service cluster using a Kubernetes manifest. The deployment must use a rolling update strategy and pull the image from ACR using the build ID as the image tag. (Requires an Azure subscription with an AKS cluster and ACR.)</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Pre-requisites</strong><span>Create an AKS cluster and ACR in the Azure Portal (or via CLI). Attach ACR to AKS: <code>az aks update --name myCluster --resource-group myRG --attach-acr myRegistry</code> — this grants AKS the AcrPull role so pods can pull images without a Kubernetes secret.</span></div></li>
+          <li><div class="step-content"><strong>Create the Kubernetes manifest (k8s/deployment.yml)</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">apiVersion</span>: <span class="str">apps/v1</span>
+<span class="kw">kind</span>: <span class="str">Deployment</span>
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: <span class="str">myapp</span>
+<span class="kw">spec</span>:
+  <span class="kw">replicas</span>: <span class="num">2</span>
+  <span class="kw">selector</span>:
+    <span class="kw">matchLabels</span>:
+      <span class="kw">app</span>: <span class="str">myapp</span>
+  <span class="kw">strategy</span>:
+    <span class="kw">type</span>: <span class="str">RollingUpdate</span>       <span class="cm"># Zero-downtime: replaces pods one at a time</span>
+    <span class="kw">rollingUpdate</span>:
+      <span class="kw">maxSurge</span>: <span class="num">1</span>
+      <span class="kw">maxUnavailable</span>: <span class="num">0</span>
+  <span class="kw">template</span>:
+    <span class="kw">metadata</span>:
+      <span class="kw">labels</span>:
+        <span class="kw">app</span>: <span class="str">myapp</span>
+    <span class="kw">spec</span>:
+      <span class="kw">containers</span>:
+        - <span class="kw">name</span>: <span class="str">myapp</span>
+          <span class="kw">image</span>: <span class="str">myregistry.azurecr.io/myapp:$(Build.BuildId)</span>
+          <span class="kw">ports</span>:
+            - <span class="kw">containerPort</span>: <span class="num">80</span></pre></div>
+        <ol class="steps-list week2" start="3">
+          <li><div class="step-content"><strong>Create the pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">stages</span>:
+  - <span class="kw">stage</span>: <span class="str">Build</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">job</span>: <span class="str">BuildAndPush</span>
+        <span class="kw">pool</span>:
+          <span class="kw">vmImage</span>: <span class="str">ubuntu-latest</span>
+        <span class="kw">steps</span>:
+          - <span class="kw">task</span>: <span class="str">Docker@2</span>
+            <span class="kw">displayName</span>: <span class="str">Build and Push to ACR</span>
+            <span class="kw">inputs</span>:
+              <span class="kw">command</span>: <span class="str">buildAndPush</span>
+              <span class="kw">containerRegistry</span>: <span class="str">acr-service-connection</span>
+              <span class="kw">repository</span>: <span class="str">myapp</span>
+              <span class="kw">tags</span>: <span class="str">$(Build.BuildId)</span>
+
+  - <span class="kw">stage</span>: <span class="str">Deploy</span>
+    <span class="kw">dependsOn</span>: <span class="str">Build</span>
+    <span class="kw">condition</span>: <span class="str">succeeded()</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">deployment</span>: <span class="str">DeployToAKS</span>
+        <span class="kw">environment</span>: <span class="str">aks-production</span>       <span class="cm"># Enables approval gates + rollback</span>
+        <span class="kw">strategy</span>:
+          <span class="kw">runOnce</span>:
+            <span class="kw">deploy</span>:
+              <span class="kw">steps</span>:
+                - <span class="kw">task</span>: <span class="str">KubernetesManifest@1</span>
+                  <span class="kw">displayName</span>: <span class="str">Deploy to AKS</span>
+                  <span class="kw">inputs</span>:
+                    <span class="kw">action</span>: <span class="str">deploy</span>
+                    <span class="kw">connectionType</span>: <span class="str">azureResourceManager</span>
+                    <span class="kw">azureSubscriptionConnection</span>: <span class="str">azure-wif-connection</span>
+                    <span class="kw">azureResourceGroup</span>: <span class="str">myRG</span>
+                    <span class="kw">kubernetesCluster</span>: <span class="str">myCluster</span>
+                    <span class="kw">manifests</span>: <span class="str">k8s/deployment.yml</span>
+                    <span class="kw">containers</span>: <span class="str">myregistry.azurecr.io/myapp:$(Build.BuildId)</span></pre></div>
+        <ol class="steps-list week2" start="4">
+          <li><div class="step-content"><strong>Verify the rollout</strong><span>After the pipeline runs, check the deployment: <code>kubectl get pods</code> shows 2 running pods with the new image. <code>kubectl rollout status deployment/myapp</code> confirms a clean rolling update with no downtime.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your AKS deployment manifest uses <code>strategy.type: RollingUpdate</code> with <code>maxUnavailable: 0</code> and <code>maxSurge: 1</code>. The cluster currently runs 2 replicas. How does Kubernetes update the pods?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Both old pods are terminated first, then 2 new pods are created — brief downtime occurs</div>
+          <div class="option wrong"><span class="opt-label">B</span> One old pod is terminated before the new one starts — always 1 pod available during update</div>
+          <div class="option correct"><span class="opt-label">C</span> A new (surge) pod starts first, then one old pod is terminated — at least 2 pods always available, zero downtime</div>
+          <div class="option wrong"><span class="opt-label">D</span> All pods are replaced simultaneously using a blue/green switch</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> With <code>maxUnavailable: 0</code>, Kubernetes never terminates an old pod until a new one is healthy and ready. With <code>maxSurge: 1</code>, it spins up one extra pod (3 total temporarily) before removing an old one. This cycle repeats until all pods run the new version — guaranteeing zero downtime. The total pod count temporarily exceeds the desired 2 during the update, which is the surge.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          Using a <code>deployment</code> job (not a regular <code>job</code>) in Azure Pipelines is required to target an <code>environment</code>. Only <code>deployment</code> jobs unlock environment-level approval gates, deployment history tracking, and rollback in the Azure DevOps UI. A regular <code>job</code> that deploys to AKS bypasses all of these controls.
+        </div>
+      </div>
+    </section>
 
     <!-- FOOTER -->
     <div style="margin-top: 3rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; color: var(--text-muted);">
@@ -1746,7 +2086,10 @@
           <tr><td>Block direct pushes</td><td>Branch policies</td><td>Branch protection rules</td></tr>
           <tr><td>No-secret auth to Azure</td><td>WIF service connection</td><td>OIDC + azure/login action</td></tr>
           <tr><td>Container scanning</td><td>MicrosoftSecurityDevOps@1</td><td>MicrosoftSecurityDevOps@1 action</td></tr>
-          <tr><td>IaC deployment</td><td>AzureResourceManagerTemplateDeployment@3</td><td>azure/arm-deploy action</td></tr>
+          <tr><td>Dependency scanning</td><td>SnykSecurityScan@1 (severityThreshold + failOnIssues)</td><td>snyk/actions or GitHub Advanced Security</td></tr>
+          <tr><td>ARM deployment</td><td>AzureResourceManagerTemplateDeployment@3 (Incremental vs Complete)</td><td>azure/arm-deploy action</td></tr>
+          <tr><td>Kubernetes deploy</td><td>KubernetesManifest@1 inside deployment job + environment</td><td>azure/k8s-deploy action</td></tr>
+          <tr><td>Pipeline debug</td><td>system.debug: true → ##[debug] logs</td><td>ACTIONS_STEP_DEBUG: true secret</td></tr>
           <tr><td>Dependency caching</td><td>Cache@2</td><td>actions/cache or setup-* cache:</td></tr>
         </tbody>
       </table>
