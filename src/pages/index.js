@@ -19,6 +19,21 @@ const DOCUMENTS = [
       "ai-native engineering ampeco rebuilt software engine autonomous ai agent workflows daily releases rewrite legacy modules scale engineering output orlin radev alexander alexiev",
   },
   {
+    title: "AZ-400 Lab Exercise Reference Guide",
+    description:
+      "15 hands-on lab exercises covering both weeks of AZ-400 prep — each with a full lab simulation (task + step-by-step answer) and an MCQ version in exam question format. Week 1 uses free resources; Week 2 requires an Azure subscription.",
+    icon: "☁️",
+    href: "/az400-lab-reference.html",
+    category: "reference",
+    tags: [
+      { label: "AZ-400", color: "blue" },
+      { label: "Azure DevOps", color: "blue" },
+      { label: "Certification", color: "purple" },
+    ],
+    search:
+      "az-400 azure devops certification lab exercise reference guide 15 exercises mcq exam simulation week 1 week 2 microsoft azure pipelines boards repos test plans artifacts",
+  },
+  {
     title: "AI-Powered Build Failure Analyzer & Fixer",
     description:
       "An autonomous agent that detects, analyzes, and fixes CI/CD build failures using GitHub Copilot SDK + Claude BYOK — with enterprise safety gates, risk classification, and OpenShift deployment.",

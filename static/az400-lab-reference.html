@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-400 Lab Exercise Reference Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0c0f1a;
+    --surface: #131827;
+    --surface2: #1a2035;
+    --border: #252d45;
+    --accent: #3b82f6;
+    --accent2: #f7934f;
+    --accent3: #4ff7a0;
+    --accent4: #f74f7e;
+    --text: #e2e8f0;
+    --text-muted: #8b97b8;
+    --text-dim: #4a5a80;
+    --correct: #1a3a2a;
+    --correct-border: #4ff7a0;
+    --wrong: #3a1a1a;
+    --wrong-border: #f74f7e;
+    --warn: #3a2a1a;
+    --warn-border: #f7934f;
+    --code-bg: #0a0c10;
+  }
+
+  html.light {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --accent2: #d97706;
+    --accent3: #059669;
+    --accent4: #dc2626;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --correct: #dcfce7;
+    --correct-border: #059669;
+    --wrong: #fee2e2;
+    --wrong-border: #dc2626;
+    --warn: #fef3c7;
+    --warn-border: #d97706;
+    --code-bg: #f1f5f9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2.5rem;
+    min-height: 80px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .site-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .site-subtitle {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-orange { background: rgba(247,147,79,0.15); color: var(--accent2); border: 1px solid rgba(247,147,79,0.3); }
+  .badge-green { background: rgba(79,247,160,0.15); color: var(--accent3); border: 1px solid rgba(79,247,160,0.3); }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section {
+    padding: 0.5rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 1rem;
+  }
+
+  .sidebar-item {
+    display: block;
+    padding: 0.55rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .sidebar-item:hover {
+    color: var(--text);
+    border-left-color: var(--accent);
+    background: rgba(59,130,246,0.05);
+  }
+
+  .sidebar-item.week-header {
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: default;
+    border-left-color: transparent;
+    background: none;
+    margin-top: 0.25rem;
+  }
+
+  .ex-num {
+    display: inline-block;
+    width: 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-right: 0.25rem;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 2.5rem 3rem;
+    max-width: 900px;
+  }
+
+  .page-intro {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .page-intro strong { color: var(--text); }
+
+  /* EXERCISE CARD */
+  .exercise {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 100px;
+  }
+
+  .ex-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ex-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-top: 0.2rem;
+  }
+
+  .ex-number.week2 { background: var(--accent2); }
+
+  .ex-title-group {}
+
+  .ex-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .ex-meta {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* SCENARIO BOX */
+  .scenario-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .box-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .label-blue { color: var(--accent); }
+  .label-orange { color: var(--accent2); }
+  .label-green { color: var(--accent3); }
+  .label-red { color: var(--accent4); }
+
+  .scenario-box p { font-size: 0.92rem; color: var(--text); }
+  .scenario-box ul { padding-left: 1.2rem; font-size: 0.92rem; color: var(--text); }
+  .scenario-box li { margin-bottom: 0.3rem; }
+
+  /* STEPS */
+  .steps-list {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+
+  .steps-list li {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.92rem;
+  }
+
+  .steps-list li::before {
+    content: counter(step);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 3px;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .steps-list.week2 li::before {
+    color: var(--accent2);
+    background: rgba(247,147,79,0.1);
+    border-color: rgba(247,147,79,0.25);
+  }
+
+  .step-content strong {
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  .step-content span { color: var(--text-muted); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #c9d1e0;
+    line-height: 1.6;
+    white-space: pre;
+  }
+
+  .kw { color: #79b8ff; }
+  .str { color: #85e89d; }
+  .cm { color: #586069; font-style: italic; }
+  .num { color: #f0c27f; }
+  .tag { color: #f97583; }
+
+  /* MCQ */
+  .mcq-section { margin-top: 1.5rem; }
+
+  .mcq-question {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(59,130,246,0.05);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+
+  .option {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.65rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  .option.correct {
+    background: var(--correct);
+    border-color: var(--correct-border);
+    color: var(--text);
+  }
+
+  .option.wrong {
+    background: var(--wrong);
+    border-color: var(--wrong-border);
+    color: var(--text-muted);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .opt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: inherit;
+    min-width: 1.2rem;
+  }
+
+  .option.correct .opt-label { color: var(--accent3); }
+  .option.wrong .opt-label { color: var(--accent4); }
+
+  /* EXPLANATION */
+  .explanation {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  .explanation strong { color: var(--text); }
+
+  /* PITFALL BOX */
+  .pitfall {
+    background: var(--warn);
+    border: 1px solid var(--warn-border);
+    border-radius: 5px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+  }
+
+  .pitfall-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* WEEK BANNER */
+  .week-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    margin-bottom: 2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .week-banner.w1 {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    color: var(--accent);
+  }
+
+  .week-banner.w2 {
+    background: rgba(247,147,79,0.08);
+    border: 1px solid rgba(247,147,79,0.2);
+    color: var(--accent2);
+  }
+
+  .week-banner-icon { font-size: 1.2rem; }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 0.75rem 0;
+  }
+
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid rgba(37,45,69,0.5);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  td:first-child { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .progress-dot {
+    width: 28px;
+    height: 5px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+
+  .progress-dot.w1 { background: var(--accent); }
+  .progress-dot.w2 { background: var(--accent2); }
+
+  /* MENU BUTTON — visible only on mobile/tablet */
+  .menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SIDEBAR CLOSE BUTTON — visible only inside drawer */
+  .sidebar-close {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .sidebar-close:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* DRAWER OVERLAY */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 490;
+    backdrop-filter: blur(2px);
+  }
+  .drawer-overlay.open { display: block; }
+
+  /* ─── RESPONSIVE ────────────────────────────────────── */
+
+  /* Narrow desktop: slim the sidebar */
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 220px 1fr; }
+    .main { padding: 2rem 2.5rem; }
+  }
+
+  /* Tablet and below: drawer sidebar */
+  @media (max-width: 900px) {
+    .site-header { padding: 0 1.25rem; min-height: 60px; }
+    .site-subtitle { display: none; }
+    .badge-row { display: none; }
+
+    .layout { grid-template-columns: 1fr; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -290px;
+      width: 280px;
+      height: 100vh;
+      z-index: 500;
+      padding-top: 0.5rem;
+      transition: left 0.25s ease;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-close { display: flex; }
+    .menu-btn { display: flex; }
+
+    .main { padding: 1.5rem 1.5rem; max-width: 100%; }
+    .exercise { margin-bottom: 2.5rem; }
+    .divider { margin: 2rem 0; }
+  }
+
+  /* Mobile: tighter spacing */
+  @media (max-width: 560px) {
+    .site-header { padding: 0 1rem; }
+    .site-title { font-size: 0.9rem; }
+    .main { padding: 1.25rem 1rem; }
+    .ex-title { font-size: 1rem; }
+    .week-banner { padding: 0.75rem 1rem; font-size: 0.78rem; }
+    .scenario-box { padding: 1rem; }
+    .code-block { padding: 0.75rem 0.875rem; }
+    table { display: block; overflow-x: auto; }
+    .exercise { margin-bottom: 2rem; }
+    .divider { margin: 1.5rem 0; }
+  }
+
+  /* BACK LINK */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 0.35rem;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover { color: var(--accent); }
+
+  .back-link svg { width: 13px; height: 13px; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  .theme-toggle .icon-sun,
+  .theme-toggle .icon-moon { display: none; }
+
+  html.light .theme-toggle .icon-moon { display: block; }
+  html:not(.light) .theme-toggle .icon-sun { display: block; }
+
+  html.light .code-block pre { color: #334155; }
+  html.light code { color: #2563eb; }
+  html.light .kw { color: #1d4ed8; }
+  html.light .str { color: #059669; }
+  html.light .cm { color: #94a3b8; }
+  html.light .num { color: #d97706; }
+  html.light .tag { color: #dc2626; }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8em;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: #79b8ff;
+  }
+</style>
+<script>
+  (function() {
+    var t = localStorage.getItem('theme');
+    if (t === 'light') document.documentElement.classList.add('light');
+  })();
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <a href="index.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+      </svg>
+      Home
+    </a>
+    <div class="site-title">AZ-400 Lab Reference Guide</div>
+    <div class="site-subtitle">15 Exercises · Both Weeks · Task + MCQ Format</div>
+  </div>
+  <div class="header-right">
+    <div class="badge-row">
+      <span class="badge badge-blue">Azure DevOps</span>
+      <span class="badge badge-green">GitHub Actions</span>
+      <span class="badge badge-orange">Azure Cloud</span>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close navigation">✕</button>
+    <div class="sidebar-section">Week 1 — Free</div>
+    <span class="sidebar-item week-header">Azure DevOps + GitHub</span>
+    <a class="sidebar-item" href="#ex1"><span class="ex-num">01</span>Multi-Stage YAML Pipeline</a>
+    <a class="sidebar-item" href="#ex2"><span class="ex-num">02</span>Pipeline Environments + Approvals</a>
+    <a class="sidebar-item" href="#ex3"><span class="ex-num">03</span>Branch Policies + PR Validation</a>
+    <a class="sidebar-item" href="#ex4"><span class="ex-num">04</span>Azure Artifacts Feed</a>
+    <a class="sidebar-item" href="#ex5"><span class="ex-num">05</span>Variable Groups + Key Vault Link</a>
+    <a class="sidebar-item" href="#ex6"><span class="ex-num">06</span>YAML Templates (Reusable)</a>
+    <a class="sidebar-item" href="#ex7"><span class="ex-num">07</span>GitHub Actions Workflow</a>
+    <a class="sidebar-item" href="#ex8"><span class="ex-num">08</span>GitHub Environments + Approvals</a>
+    <a class="sidebar-item" href="#ex9"><span class="ex-num">09</span>GHAS — Secret Scanning</a>
+
+    <div class="sidebar-section">Week 2 — Azure</div>
+    <span class="sidebar-item week-header">Cloud Resources</span>
+    <a class="sidebar-item" href="#ex10"><span class="ex-num">10</span>Deploy Azure Web App via Pipeline</a>
+    <a class="sidebar-item" href="#ex11"><span class="ex-num">11</span>Deploy Bicep via Pipeline</a>
+    <a class="sidebar-item" href="#ex12"><span class="ex-num">12</span>App Insights Integration</a>
+    <a class="sidebar-item" href="#ex13"><span class="ex-num">13</span>Key Vault + Pipeline Secrets</a>
+    <a class="sidebar-item" href="#ex14"><span class="ex-num">14</span>Service Connection (WIF/OIDC)</a>
+    <a class="sidebar-item" href="#ex15"><span class="ex-num">15</span>Container Image Scan + Push to ACR</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-intro">
+      <strong>How to use this guide:</strong> Each exercise has two parts — a <strong>Lab Simulation</strong> (the task + correct step-by-step answer) and an <strong>MCQ Version</strong> (the same concept in exam question format). Read both for each exercise. Week 1 exercises use only free resources. Week 2 exercises require an Azure subscription.
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-dot w1"></div><div class="progress-dot w1"></div><div class="progress-dot w1"></div>
+      <div class="progress-dot w1"></div><div class="progress-dot w1"></div><div class="progress-dot w1"></div>
+      <div class="progress-dot w1"></div><div class="progress-dot w1"></div><div class="progress-dot w1"></div>
+      <div class="progress-dot w2"></div><div class="progress-dot w2"></div><div class="progress-dot w2"></div>
+      <div class="progress-dot w2"></div><div class="progress-dot w2"></div><div class="progress-dot w2"></div>
+    </div>
+
+    <!-- WEEK 1 BANNER -->
+    <div class="week-banner w1">
+      <span class="week-banner-icon">⚙️</span>
+      Week 1 — Free Resources: Azure DevOps + GitHub
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- EX 1 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex1">
+      <div class="ex-header">
+        <div class="ex-number">EX 01</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Create a Multi-Stage YAML Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-blue">YAML</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>You need to create a YAML pipeline in Azure DevOps with three sequential stages: <strong>Build</strong>, <strong>Test</strong>, and <strong>Deploy</strong>. The Test stage must only run if Build succeeds. The Deploy stage must only run if Test succeeds. The pipeline must trigger on pushes to <code>main</code>.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Go to Azure DevOps → Pipelines → New Pipeline</strong><span>Select your repo (Azure Repos Git or GitHub). Choose "Starter pipeline" or "Existing YAML file".</span></div></li>
+          <li><div class="step-content"><strong>Create azure-pipelines.yml in your repo root</strong><span>Add the following YAML:</span></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">trigger</span>:
+  <span class="kw">branches</span>:
+    <span class="kw">include</span>:
+      - <span class="str">main</span>
+
+<span class="kw">stages</span>:
+  - <span class="kw">stage</span>: <span class="str">Build</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">job</span>: <span class="str">BuildJob</span>
+        <span class="kw">pool</span>:
+          <span class="kw">vmImage</span>: <span class="str">ubuntu-latest</span>
+        <span class="kw">steps</span>:
+          - <span class="kw">script</span>: <span class="str">echo "Building..."</span>
+
+  - <span class="kw">stage</span>: <span class="str">Test</span>
+    <span class="kw">dependsOn</span>: <span class="str">Build</span>
+    <span class="kw">condition</span>: <span class="str">succeeded()</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">job</span>: <span class="str">TestJob</span>
+        <span class="kw">pool</span>:
+          <span class="kw">vmImage</span>: <span class="str">ubuntu-latest</span>
+        <span class="kw">steps</span>:
+          - <span class="kw">script</span>: <span class="str">echo "Testing..."</span>
+
+  - <span class="kw">stage</span>: <span class="str">Deploy</span>
+    <span class="kw">dependsOn</span>: <span class="str">Test</span>
+    <span class="kw">condition</span>: <span class="str">succeeded()</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">job</span>: <span class="str">DeployJob</span>
+        <span class="kw">pool</span>:
+          <span class="kw">vmImage</span>: <span class="str">ubuntu-latest</span>
+        <span class="kw">steps</span>:
+          - <span class="kw">script</span>: <span class="str">echo "Deploying..."</span></pre></div>
+        <ol class="steps-list" start="3">
+          <li><div class="step-content"><strong>Commit and push to main</strong><span>The pipeline triggers automatically. Verify all three stages appear in sequence in the pipeline run view.</span></div></li>
+          <li><div class="step-content"><strong>Verify stage dependency</strong><span>Manually fail the Build stage by changing the script to <code>exit 1</code>. Confirm that Test and Deploy are skipped.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your YAML pipeline has Build → Test → Deploy stages. The Test stage has <code>dependsOn: Build</code> and <code>condition: succeeded()</code>. The Build stage fails. What happens to the Test and Deploy stages?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Both run — explicit conditions override failure behaviour</div>
+          <div class="option correct"><span class="opt-label">B</span> Both are skipped — <code>succeeded()</code> evaluates to false when Build fails</div>
+          <div class="option wrong"><span class="opt-label">C</span> Test runs, Deploy is skipped</div>
+          <div class="option wrong"><span class="opt-label">D</span> Both fail immediately when they start</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> <code>succeeded()</code> is the default condition — it returns false if any dependency stage failed, causing the dependent stage to be <em>skipped</em> (not failed). Skipped is a distinct state from failed in Azure Pipelines. The Deploy stage also skips because its dependency (Test) was skipped, not succeeded.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          A skipped stage does not cause the overall pipeline to fail. The pipeline may be marked "partially succeeded" rather than "failed". Know the difference between skipped, failed, and cancelled stage states.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 2 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex2">
+      <div class="ex-header">
+        <div class="ex-number">EX 02</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure Pipeline Environments with Approvals</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-blue">Environments</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Azure Pipelines environment named <strong>production</strong>. Configure it to require approval from a specific user before any deployment job targeting that environment can proceed. Update your pipeline to use a deployment job targeting this environment.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create the Environment</strong><span>Azure DevOps → Pipelines → Environments → New environment. Name: <code>production</code>. Resource: None.</span></div></li>
+          <li><div class="step-content"><strong>Add Approval Check</strong><span>Click the environment → Approvals and checks → + Add → Approvals. Add the approver's name. Save.</span></div></li>
+          <li><div class="step-content"><strong>Update pipeline YAML to use a deployment job</strong></div></li>
+        </ol>
+        <div class="code-block"><pre>- <span class="kw">stage</span>: <span class="str">Deploy</span>
+  <span class="kw">jobs</span>:
+    - <span class="kw">deployment</span>: <span class="str">DeployApp</span>   <span class="cm"># deployment: not job:</span>
+      <span class="kw">environment</span>: <span class="str">production</span>    <span class="cm"># references the environment</span>
+      <span class="kw">pool</span>:
+        <span class="kw">vmImage</span>: <span class="str">ubuntu-latest</span>
+      <span class="kw">strategy</span>:
+        <span class="kw">runOnce</span>:
+          <span class="kw">deploy</span>:
+            <span class="kw">steps</span>:
+              - <span class="kw">script</span>: <span class="str">echo "Deploying to production"</span></pre></div>
+        <ol class="steps-list" start="4">
+          <li><div class="step-content"><strong>Trigger the pipeline and observe</strong><span>When the Deploy stage starts, the pipeline pauses and sends an approval notification. The approver must approve in the Azure DevOps UI before the deployment job executes.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">You want a human to approve deployments to production in an Azure Pipelines YAML pipeline. Which combination is required?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Add an <code>if</code> condition checking <code>Build.RequestedFor</code> on the Deploy stage</div>
+          <div class="option wrong"><span class="opt-label">B</span> Use a classic release pipeline — YAML pipelines don't support approvals</div>
+          <div class="option correct"><span class="opt-label">C</span> Create an Environment with an Approvals check, then target it from a <code>deployment:</code> job</div>
+          <div class="option wrong"><span class="opt-label">D</span> Add a <code>gate:</code> keyword to the Deploy stage YAML</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> YAML pipelines fully support approvals via Environments. The key is using <code>deployment:</code> (not <code>job:</code>) which integrates with the environment. The <code>gate:</code> keyword does not exist in YAML. Classic pipelines are not required — YAML has equivalent functionality.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          You must use <code>deployment:</code> not <code>job:</code> to target an environment. A regular <code>job:</code> with an <code>environment:</code> property does not exist — only deployment jobs integrate with environments in YAML.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 3 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex3">
+      <div class="ex-header">
+        <div class="ex-number">EX 03</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure Branch Policies and PR Validation</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Repos</span>
+            <span class="badge badge-blue">Branch Policies</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Protect the <code>main</code> branch in an Azure DevOps repo. Requirements: at least 2 reviewers, a passing build validation pipeline, and no direct pushes. Ensure the build validation pipeline runs on every PR targeting <code>main</code>.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Navigate to branch policies</strong><span>Azure DevOps → Repos → Branches → hover over <code>main</code> → click the "..." menu → Branch policies.</span></div></li>
+          <li><div class="step-content"><strong>Enable Require a minimum number of reviewers</strong><span>Set minimum to 2. Enable "Reset votes when new changes are pushed" for stricter control.</span></div></li>
+          <li><div class="step-content"><strong>Add Build Validation</strong><span>Under "Build Validation" → + Add. Select your pipeline. Set trigger to "Automatic". Set policy requirement to "Required". Save.</span></div></li>
+          <li><div class="step-content"><strong>Block direct pushes</strong><span>Branch policies automatically block direct pushes when any required policy is set. Verify by attempting a direct push — it should be rejected.</span></div></li>
+          <li><div class="step-content"><strong>Test with a PR</strong><span>Create a feature branch, make a change, open a PR targeting main. The build validation pipeline should trigger automatically.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">A developer pushes directly to <code>main</code> bypassing the PR process. Which Azure DevOps configuration prevents this?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Pipeline YAML trigger exclusion on main</div>
+          <div class="option wrong"><span class="opt-label">B</span> Setting the developer's permissions to "Contribute" instead of "Admin"</div>
+          <div class="option correct"><span class="opt-label">C</span> Enabling branch policies on main with at least one required policy</div>
+          <div class="option wrong"><span class="opt-label">D</span> Adding a pre-commit hook in the repository</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Branch policies in Azure DevOps enforce that all changes go through a PR. When any required policy is active, direct pushes to the branch are blocked at the server side — no client-side hook needed. Trigger exclusions only affect pipeline runs, not who can push.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 4 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex4">
+      <div class="ex-header">
+        <div class="ex-number">EX 04</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Create an Azure Artifacts Feed and Publish a Package</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Artifacts</span>
+            <span class="badge badge-blue">NuGet</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Azure Artifacts feed named <strong>internal-packages</strong> scoped to your project. Configure a pipeline to restore NuGet packages from this feed. Add an upstream source pointing to NuGet.org so packages not in your feed are fetched transparently.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create the Feed</strong><span>Azure DevOps → Artifacts → Create Feed. Name: <code>internal-packages</code>. Scope: Project. Enable upstream sources (NuGet Gallery). Click Create.</span></div></li>
+          <li><div class="step-content"><strong>Connect to Feed</strong><span>Click "Connect to feed" → NuGet.exe or dotnet. Copy the feed URL — it looks like: <code>https://pkgs.dev.azure.com/{org}/{project}/_packaging/internal-packages/nuget/v3/index.json</code></span></div></li>
+          <li><div class="step-content"><strong>Add NuGetAuthenticate task to pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">NuGetAuthenticate@1</span>   <span class="cm"># Authenticates to Azure Artifacts feeds</span>
+
+  - <span class="kw">task</span>: <span class="str">NuGetCommand@2</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">command</span>: <span class="str">restore</span>
+      <span class="kw">feedsToUse</span>: <span class="str">select</span>
+      <span class="kw">vstsFeed</span>: <span class="str">internal-packages</span>   <span class="cm"># Feed name</span></pre></div>
+        <ol class="steps-list" start="4">
+          <li><div class="step-content"><strong>Understand feed views</strong><span>Navigate to Artifacts → internal-packages. Packages appear in the @local view by default. Promote a package to @release view by selecting it → Promote.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your pipeline restores NuGet packages from an Azure Artifacts feed. A required package exists on NuGet.org but not in your feed. You have upstream sources enabled. What happens?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> The restore fails — packages must be manually uploaded to the feed first</div>
+          <div class="option correct"><span class="opt-label">B</span> The package is fetched from NuGet.org through the upstream source and saved in the feed for future use</div>
+          <div class="option wrong"><span class="opt-label">C</span> The pipeline prompts the developer to approve the external package download</div>
+          <div class="option wrong"><span class="opt-label">D</span> The package is fetched directly from NuGet.org, bypassing the feed entirely</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> Upstream sources act as a transparent proxy — when a package is not found locally, Azure Artifacts fetches it from the configured upstream (NuGet.org) and saves a copy in your feed. Subsequent requests are served from the feed cache, giving you control and visibility over all dependencies used in your organization.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 5 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex5">
+      <div class="ex-header">
+        <div class="ex-number">EX 05</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure Variable Groups and Link to Azure Key Vault</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-orange">Key Vault</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create a variable group named <strong>release-secrets</strong> linked to an Azure Key Vault. Map two secrets from the vault to pipeline variables. Configure pipeline permissions so only your release pipeline can use this variable group. Reference the secrets in a YAML pipeline.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create Variable Group</strong><span>Azure DevOps → Pipelines → Library → + Variable group. Name: <code>release-secrets</code>. Toggle "Link secrets from an Azure key vault as variables". Select your subscription and Key Vault.</span></div></li>
+          <li><div class="step-content"><strong>Map secrets</strong><span>Click "+ Add" under variables. Select the secrets you want to map (e.g., <code>API-KEY</code>, <code>DB-PASSWORD</code>). Save.</span></div></li>
+          <li><div class="step-content"><strong>Restrict pipeline access</strong><span>In the variable group → Security tab → Pipeline permissions → change to restricted. Explicitly add only your release pipeline.</span></div></li>
+          <li><div class="step-content"><strong>Reference in YAML pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">variables</span>:
+  - <span class="kw">group</span>: <span class="str">release-secrets</span>   <span class="cm"># Reference the variable group</span>
+
+<span class="kw">steps</span>:
+  - <span class="kw">script</span>: <span class="str">echo "API key length: ${#API_KEY}"</span>
+    <span class="kw">env</span>:
+      <span class="kw">API_KEY</span>: <span class="str">$(API-KEY)</span>   <span class="cm"># Secret masked in logs automatically</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">You have a variable group linked to Azure Key Vault. A junior developer creates a new pipeline that references the same variable group. What happens?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> The new pipeline automatically has access — all pipelines in the project share variable groups</div>
+          <div class="option correct"><span class="opt-label">B</span> If the variable group is set to restricted access, the new pipeline is blocked until explicitly authorized</div>
+          <div class="option wrong"><span class="opt-label">C</span> The Key Vault access policy blocks the new pipeline at the Azure resource level</div>
+          <div class="option wrong"><span class="opt-label">D</span> The pipeline runs but secrets are returned as empty strings</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> Pipeline permissions on variable groups control which pipelines can use them within Azure DevOps. When restricted, unauthorized pipelines are blocked before the pipeline even runs — the developer will see an authorization error in the pipeline UI and must request access.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 6 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex6">
+      <div class="ex-header">
+        <div class="ex-number">EX 06</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Create and Use Reusable YAML Templates</div>
+          <div class="ex-meta">
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-blue">Templates</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create a reusable YAML step template that runs a security scan. Store it in a central repository. Reference this template from a pipeline in a different repository. The template should accept a parameter for the scan type.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create the template file in central repo</strong><span>In repo <code>central-templates</code>, create <code>templates/security-scan.yml</code>:</span></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="cm"># templates/security-scan.yml</span>
+<span class="kw">parameters</span>:
+  - <span class="kw">name</span>: <span class="str">scanType</span>
+    <span class="kw">type</span>: <span class="str">string</span>
+    <span class="kw">default</span>: <span class="str">full</span>
+
+<span class="kw">steps</span>:
+  - <span class="kw">script</span>: <span class="str">echo "Running ${{ parameters.scanType }} security scan"</span>
+    <span class="kw">displayName</span>: <span class="str">Security Scan (${{ parameters.scanType }})</span></pre></div>
+        <ol class="steps-list" start="2">
+          <li><div class="step-content"><strong>Reference the template from another pipeline</strong><span>In your consuming pipeline repo, add a <code>resources</code> block and use the <code>template</code> keyword:</span></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">resources</span>:
+  <span class="kw">repositories</span>:
+    - <span class="kw">repository</span>: <span class="str">templates</span>
+      <span class="kw">type</span>: <span class="str">git</span>
+      <span class="kw">name</span>: <span class="str">MyProject/central-templates</span>
+
+<span class="kw">stages</span>:
+  - <span class="kw">stage</span>: <span class="str">Build</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">job</span>: <span class="str">BuildAndScan</span>
+        <span class="kw">steps</span>:
+          - <span class="kw">script</span>: <span class="str">echo "Building..."</span>
+          - <span class="kw">template</span>: <span class="str">templates/security-scan.yml@templates</span>
+            <span class="kw">parameters</span>:
+              <span class="kw">scanType</span>: <span class="str">quick</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your organization wants all pipelines to mandatorily extend a centrally managed security template that cannot be bypassed. Which feature enforces this?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> CODEOWNERS file in each repository</div>
+          <div class="option wrong"><span class="opt-label">B</span> Allowed task policy at the organization level</div>
+          <div class="option correct"><span class="opt-label">C</span> <code>extends</code> template with <code>requireTemplate</code> enforcement at organization or project level</div>
+          <div class="option wrong"><span class="opt-label">D</span> Branch policy requiring PR review on pipeline YAML files</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> The <code>extends</code> keyword combined with <code>requireTemplate</code> creates a hard enforcement — pipelines that don't extend from the approved template are rejected at startup before any steps run. CODEOWNERS and branch policies are soft controls requiring human review. The allowed task policy controls which tasks can run, not whether templates are used.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 7 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex7">
+      <div class="ex-header">
+        <div class="ex-number">EX 07</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Create a GitHub Actions CI Workflow</div>
+          <div class="ex-meta">
+            <span class="badge badge-green">GitHub Actions</span>
+            <span class="badge badge-green">CI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create a GitHub Actions workflow that triggers on push to <code>main</code> and on pull requests targeting <code>main</code>. The workflow must: checkout code, set up Node.js 20, install dependencies using <code>npm ci</code>, cache node_modules, and run tests with <code>npm test</code>.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create .github/workflows/ci.yml in your GitHub repo</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">name</span>: <span class="str">CI</span>
+
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [<span class="str">main</span>]
+  <span class="kw">pull_request</span>:
+    <span class="kw">branches</span>: [<span class="str">main</span>]
+
+<span class="kw">jobs</span>:
+  <span class="kw">build-and-test</span>:
+    <span class="kw">runs-on</span>: <span class="str">ubuntu-latest</span>
+
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: <span class="str">actions/checkout@v4</span>
+
+      - <span class="kw">uses</span>: <span class="str">actions/setup-node@v4</span>
+        <span class="kw">with</span>:
+          <span class="kw">node-version</span>: <span class="str">'20'</span>
+          <span class="kw">cache</span>: <span class="str">'npm'</span>       <span class="cm"># Built-in npm caching</span>
+
+      - <span class="kw">name</span>: <span class="str">Install dependencies</span>
+        <span class="kw">run</span>: <span class="str">npm ci</span>          <span class="cm"># Deterministic install</span>
+
+      - <span class="kw">name</span>: <span class="str">Run tests</span>
+        <span class="kw">run</span>: <span class="str">npm test</span></pre></div>
+        <ol class="steps-list" start="2">
+          <li><div class="step-content"><strong>Commit and push to main or open a PR</strong><span>The workflow triggers. View it under Actions tab in GitHub. Green checkmark = all steps passed.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your GitHub Actions workflow uses <code>actions/setup-node@v4</code> with <code>cache: 'npm'</code>. On the first run after adding this, what happens?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Cache hit — packages are restored instantly</div>
+          <div class="option correct"><span class="opt-label">B</span> Cache miss — npm install runs normally, then cache is populated for future runs</div>
+          <div class="option wrong"><span class="opt-label">C</span> The workflow fails — cache must be pre-populated before first use</div>
+          <div class="option wrong"><span class="opt-label">D</span> Caching is skipped on the first run automatically</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> On first run, no cache exists for the computed key — this is a cache miss. The workflow runs npm install normally, and the cache is saved at the end of the run. All subsequent runs with the same key (same package-lock.json hash) get a cache hit and restore faster.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 8 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex8">
+      <div class="ex-header">
+        <div class="ex-number">EX 08</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure GitHub Environments with Required Reviewers</div>
+          <div class="ex-meta">
+            <span class="badge badge-green">GitHub Actions</span>
+            <span class="badge badge-green">Environments</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create two GitHub environments: <strong>staging</strong> and <strong>production</strong>. Add required reviewers to production only. Create a workflow with two sequential jobs — one deploying to staging and one to production. Each environment should have different secret values for <code>API_KEY</code>.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Create environments in GitHub</strong><span>Repo → Settings → Environments → New environment. Create <code>staging</code> (no protection rules). Create <code>production</code> → add Required reviewers → add your username. Save.</span></div></li>
+          <li><div class="step-content"><strong>Add environment-specific secrets</strong><span>In each environment settings → Secrets → Add secret. Add <code>API_KEY</code> with different values for staging vs production.</span></div></li>
+          <li><div class="step-content"><strong>Create workflow with two deployment jobs</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">jobs</span>:
+  <span class="kw">deploy-staging</span>:
+    <span class="kw">runs-on</span>: <span class="str">ubuntu-latest</span>
+    <span class="kw">environment</span>: <span class="str">staging</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">run</span>: <span class="str">echo "Deploying to staging"</span>
+        <span class="kw">env</span>:
+          <span class="kw">API_KEY</span>: <span class="str">${{ secrets.API_KEY }}</span>   <span class="cm"># staging's value</span>
+
+  <span class="kw">deploy-production</span>:
+    <span class="kw">needs</span>: <span class="str">deploy-staging</span>
+    <span class="kw">runs-on</span>: <span class="str">ubuntu-latest</span>
+    <span class="kw">environment</span>: <span class="str">production</span>   <span class="cm"># pauses for approval here</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">run</span>: <span class="str">echo "Deploying to production"</span>
+        <span class="kw">env</span>:
+          <span class="kw">API_KEY</span>: <span class="str">${{ secrets.API_KEY }}</span>   <span class="cm"># production's value</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">In a GitHub Actions workflow, two jobs target different environments with the same secret name <code>DB_PASSWORD</code>. Each environment has a different value configured. Which value does each job receive?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Both jobs receive the repository-level secret value</div>
+          <div class="option wrong"><span class="opt-label">B</span> The first job's value — secrets resolve once at workflow start</div>
+          <div class="option correct"><span class="opt-label">C</span> Each job receives its own environment's value — environment secrets are injected per job when that job starts</div>
+          <div class="option wrong"><span class="opt-label">D</span> The workflow fails — duplicate secret names across environments are not allowed</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Environment secrets are scoped to their environment and injected only when a job targeting that environment starts executing. This is what makes environment secrets valuable — the same secret name can hold different values per environment, and each job gets the right value automatically based on which environment it targets.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 9 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex9">
+      <div class="ex-header">
+        <div class="ex-number">EX 09</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Enable and Configure GHAS Secret Scanning with Push Protection</div>
+          <div class="ex-meta">
+            <span class="badge badge-green">GitHub</span>
+            <span class="badge badge-green">GHAS</span>
+            <span class="badge badge-green">Security</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Enable GitHub Advanced Security on a repository. Enable secret scanning and push protection. Test that a push containing a fake AWS access key is blocked. Review the secret scanning alerts dashboard.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list">
+          <li><div class="step-content"><strong>Enable GHAS on the repository</strong><span>Repo → Settings → Security → Code security and analysis. Enable "GitHub Advanced Security" (required for private repos — free for public repos).</span></div></li>
+          <li><div class="step-content"><strong>Enable Secret Scanning</strong><span>In the same Code security page → enable "Secret scanning". Then enable "Push protection" below it.</span></div></li>
+          <li><div class="step-content"><strong>Test push protection</strong><span>Create a test file containing a fake AWS-format key pattern (do NOT use real keys). Attempt to push. GitHub should block the push with a message identifying the secret type and location.</span></div></li>
+          <li><div class="step-content"><strong>Review alerts</strong><span>Security tab → Secret scanning alerts. All detected secrets appear here with their location, type, and status (open/resolved).</span></div></li>
+          <li><div class="step-content"><strong>Understand bypass</strong><span>Push protection can be bypassed by the developer with a documented justification. This creates an audit trail visible to admins.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">A developer tries to push a commit containing an API key. GHAS secret scanning is enabled with push protection. What is the outcome?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> The push succeeds and an alert is created post-push in the Security tab</div>
+          <div class="option wrong"><span class="opt-label">B</span> The push is permanently blocked and the developer must remove the secret before any push is possible</div>
+          <div class="option correct"><span class="opt-label">C</span> The push is blocked with an error identifying the secret. The developer can bypass with a documented justification, creating an audit trail</div>
+          <div class="option wrong"><span class="opt-label">D</span> The secret is automatically redacted from the commit and the push succeeds</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Push protection blocks the push and requires the developer to take action — either remove the secret or provide a bypass justification. The bypass is not permanent silence; it creates an audit record. This is the key difference from detection mode (which only alerts after the push succeeds).
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          Push protection is not an absolute block — it can be bypassed. The security value is the audit trail and the friction it adds, not an impenetrable barrier. Detection mode (no push protection) only alerts after the commit is already in the repository.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- WEEK 2 BANNER -->
+    <div class="week-banner w2">
+      <span class="week-banner-icon">☁️</span>
+      Week 2 — Azure Cloud Resources (Subscription Required)
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- EX 10 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex10">
+      <div class="ex-header">
+        <div class="ex-number ex-number week2">EX 10</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Deploy an Azure Web App via Azure Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">Azure Web App</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Azure Pipeline that builds a web application and deploys it to an Azure App Service Web App using a service connection. The pipeline must use deployment slots — deploy to the <strong>staging</strong> slot first, then swap to production after a manual approval.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Pre-requisites in Azure Portal</strong><span>Create an App Service Plan (Free F1 or Basic B1). Create a Web App. Add a deployment slot named "staging" (requires Standard tier or above).</span></div></li>
+          <li><div class="step-content"><strong>Create Service Connection in Azure DevOps</strong><span>Project Settings → Service connections → New → Azure Resource Manager → Workload Identity Federation (recommended). Select subscription and resource group. Name it <code>azure-connection</code>.</span></div></li>
+          <li><div class="step-content"><strong>Create pipeline with slot deploy + swap</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">stages</span>:
+  - <span class="kw">stage</span>: <span class="str">DeployStaging</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">deployment</span>: <span class="str">DeployToSlot</span>
+        <span class="kw">environment</span>: <span class="str">staging</span>
+        <span class="kw">strategy</span>:
+          <span class="kw">runOnce</span>:
+            <span class="kw">deploy</span>:
+              <span class="kw">steps</span>:
+                - <span class="kw">task</span>: <span class="str">AzureWebApp@1</span>
+                  <span class="kw">inputs</span>:
+                    <span class="kw">azureSubscription</span>: <span class="str">azure-connection</span>
+                    <span class="kw">appName</span>: <span class="str">my-web-app</span>
+                    <span class="kw">deployToSlotOrASE</span>: <span class="str">true</span>
+                    <span class="kw">resourceGroupName</span>: <span class="str">my-rg</span>
+                    <span class="kw">slotName</span>: <span class="str">staging</span>
+
+  - <span class="kw">stage</span>: <span class="str">SwapToProduction</span>
+    <span class="kw">dependsOn</span>: <span class="str">DeployStaging</span>
+    <span class="kw">jobs</span>:
+      - <span class="kw">deployment</span>: <span class="str">SwapSlot</span>
+        <span class="kw">environment</span>: <span class="str">production</span>   <span class="cm"># approval gate here</span>
+        <span class="kw">strategy</span>:
+          <span class="kw">runOnce</span>:
+            <span class="kw">deploy</span>:
+              <span class="kw">steps</span>:
+                - <span class="kw">task</span>: <span class="str">AzureAppServiceManage@0</span>
+                  <span class="kw">inputs</span>:
+                    <span class="kw">azureSubscription</span>: <span class="str">azure-connection</span>
+                    <span class="kw">action</span>: <span class="str">Swap Slots</span>
+                    <span class="kw">webAppName</span>: <span class="str">my-web-app</span>
+                    <span class="kw">resourceGroupName</span>: <span class="str">my-rg</span>
+                    <span class="kw">sourceSlot</span>: <span class="str">staging</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">What is the primary benefit of deploying to a staging slot before swapping to production in Azure App Service?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> It reduces deployment cost by using shared infrastructure</div>
+          <div class="option correct"><span class="opt-label">B</span> The swap is near-instantaneous with no downtime, and the previous version remains in the staging slot for immediate rollback</div>
+          <div class="option wrong"><span class="opt-label">C</span> It automatically runs smoke tests before swapping</div>
+          <div class="option wrong"><span class="opt-label">D</span> It prevents the new version from receiving any traffic until explicitly enabled</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> Slot swapping works by routing traffic between two warm instances — the swap is near-instantaneous (no cold start). The previous production version moves to the staging slot, enabling instant rollback by swapping back. This is the deployment pattern the AZ-400 exam associates with "minimizing downtime during deployments."
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 11 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex11">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 11</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Deploy Azure Infrastructure using Bicep via Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">Bicep</span>
+            <span class="badge badge-orange">IaC</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Write a Bicep template that creates an Azure Storage Account. Create an Azure Pipeline that deploys this Bicep template to a resource group using the <code>AzureResourceManagerTemplateDeployment@3</code> task. Use Incremental deployment mode.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Create main.bicep in your repo</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="cm">// main.bicep</span>
+<span class="kw">param</span> storageAccountName <span class="kw">string</span> = <span class="str">'mystorageaccount${uniqueString(resourceGroup().id)}'</span>
+<span class="kw">param</span> location <span class="kw">string</span> = resourceGroup().location
+
+<span class="kw">resource</span> storageAccount <span class="str">'Microsoft.Storage/storageAccounts@2023-01-01'</span> = {
+  <span class="kw">name</span>: storageAccountName
+  <span class="kw">location</span>: location
+  <span class="kw">sku</span>: {
+    <span class="kw">name</span>: <span class="str">'Standard_LRS'</span>
+  }
+  <span class="kw">kind</span>: <span class="str">'StorageV2'</span>
+}
+
+<span class="kw">output</span> storageAccountId <span class="kw">string</span> = storageAccount.id</pre></div>
+        <ol class="steps-list week2" start="2">
+          <li><div class="step-content"><strong>Create pipeline to deploy the Bicep template</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">AzureResourceManagerTemplateDeployment@3</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">deploymentScope</span>: <span class="str">Resource Group</span>
+      <span class="kw">azureResourceManagerConnection</span>: <span class="str">azure-connection</span>
+      <span class="kw">subscriptionId</span>: <span class="str">$(subscriptionId)</span>
+      <span class="kw">action</span>: <span class="str">Create Or Update Resource Group</span>
+      <span class="kw">resourceGroupName</span>: <span class="str">my-rg</span>
+      <span class="kw">location</span>: <span class="str">canadacentral</span>
+      <span class="kw">templateLocation</span>: <span class="str">Linked artifact</span>
+      <span class="kw">csmFile</span>: <span class="str">main.bicep</span>
+      <span class="kw">deploymentMode</span>: <span class="str">Incremental</span>   <span class="cm"># Only add/update, never delete</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your Bicep deployment uses <code>deploymentMode: Complete</code> instead of <code>Incremental</code>. A storage account exists in the resource group that is NOT in the Bicep template. What happens?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Nothing — Complete mode only adds resources, same as Incremental</div>
+          <div class="option wrong"><span class="opt-label">B</span> The deployment fails — Complete mode requires all resources to be in the template</div>
+          <div class="option correct"><span class="opt-label">C</span> The storage account is deleted — Complete mode removes resources not defined in the template</div>
+          <div class="option wrong"><span class="opt-label">D</span> The storage account is moved to a different resource group</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Complete mode enforces the template as the desired state of the entire resource group — any resource in the group not present in the template is deleted. Incremental mode only adds or updates resources and never deletes. Use Complete mode carefully — it's useful for rollback scenarios but dangerous if your template doesn't capture all resources.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          Complete mode is often the correct answer for "rollback infrastructure to previous state" scenarios. Incremental mode is the safe default for ongoing deployments. Know when each is appropriate.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 12 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex12">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 12</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure Application Insights for a Web App</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">Application Insights</span>
+            <span class="badge badge-orange">Monitoring</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Application Insights resource and connect it to an Azure Web App. Configure an availability test that pings the app's home page every 5 minutes from multiple locations. Create an alert that fires when availability drops below 80%. Write a basic KQL query to find failed requests in the last hour.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Create Application Insights resource</strong><span>Azure Portal → Create resource → Application Insights. Select your resource group, region, and Log Analytics workspace. Create.</span></div></li>
+          <li><div class="step-content"><strong>Connect to Web App</strong><span>Web App → Settings → Application Insights → Turn on → Select your App Insights resource → Apply. The connection string is automatically added to app settings.</span></div></li>
+          <li><div class="step-content"><strong>Create Availability Test</strong><span>App Insights → Availability → + Add Standard test. URL: your app's homepage URL. Test frequency: 5 minutes. Select multiple locations (e.g., East US, West Europe, Southeast Asia).</span></div></li>
+          <li><div class="step-content"><strong>Create Alert for availability drop</strong><span>Availability test → Alert rules → + Create. Signal: Availability. Threshold: Less than 80%. Action group: create one that sends email. Severity: 1 (Error).</span></div></li>
+          <li><div class="step-content"><strong>Write KQL query for failed requests</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="cm">// Failed requests in last hour</span>
+<span class="kw">requests</span>
+| <span class="kw">where</span> timestamp > ago(<span class="num">1h</span>)
+| <span class="kw">where</span> success == <span class="kw">false</span>
+| <span class="kw">project</span> timestamp, name, duration, resultCode, url
+| <span class="kw">order by</span> timestamp <span class="kw">desc</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">A request fails in your microservices app. The error surfaces in Service C, which was called by Service B, called by Service A. Which Application Insights feature shows the complete call chain in a single view?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Metrics Explorer — create a multi-resource chart</div>
+          <div class="option wrong"><span class="opt-label">B</span> Live Metrics — real-time performance stream</div>
+          <div class="option correct"><span class="opt-label">C</span> End-to-end transaction details / Distributed tracing view</div>
+          <div class="option wrong"><span class="opt-label">D</span> Availability test results dashboard</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Application Insights propagates a correlation ID through all service calls. The end-to-end transaction view (accessed from a failed request) shows the complete call chain — Service A → B → C — with timing, dependencies, and the exact failure point. This is distributed tracing, one of the key exam objectives under instrumentation strategy.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 13 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex13">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 13</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Integrate Azure Key Vault Secrets into a Pipeline</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">Key Vault</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-orange">Security</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Store a database connection string as a secret in Azure Key Vault. Access this secret in an Azure Pipeline using the <code>AzureKeyVault@2</code> task. Ensure the secret value is masked in pipeline logs. Verify the pipeline cannot access the secret if the service connection lacks Key Vault Reader permissions.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Create secret in Key Vault</strong><span>Azure Portal → Key Vault → Secrets → + Generate/Import. Name: <code>db-connection-string</code>. Value: your connection string. Create.</span></div></li>
+          <li><div class="step-content"><strong>Grant service connection access</strong><span>Key Vault → Access control (IAM) → + Add role assignment. Role: Key Vault Secrets User. Assign to the service principal used by your Azure DevOps service connection.</span></div></li>
+          <li><div class="step-content"><strong>Use AzureKeyVault task in pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">AzureKeyVault@2</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">azureSubscription</span>: <span class="str">azure-connection</span>
+      <span class="kw">KeyVaultName</span>: <span class="str">my-keyvault</span>
+      <span class="kw">SecretsFilter</span>: <span class="str">db-connection-string</span>   <span class="cm"># Or '*' for all</span>
+      <span class="kw">RunAsPreJob</span>: <span class="str">true</span>   <span class="cm"># Available to all steps in job</span>
+
+  - <span class="kw">script</span>: <span class="str">echo "Connecting to database..."</span>
+    <span class="kw">env</span>:
+      <span class="kw">CONNECTION_STRING</span>: <span class="str">$(db-connection-string)</span>   <span class="cm"># Auto-masked in logs</span></pre></div>
+        <ol class="steps-list week2" start="4">
+          <li><div class="step-content"><strong>Verify masking</strong><span>In the pipeline log, if you print <code>$(db-connection-string)</code>, it appears as <code>***</code>. Any occurrence of the secret value in any log line is automatically masked by Azure Pipelines.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">You have a Key Vault secret referenced in a pipeline via <code>AzureKeyVault@2</code>. A developer adds a debug step that prints all environment variables. What happens to the secret value in the logs?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> The secret value is printed in plain text — masking only applies to the specific variable reference</div>
+          <div class="option correct"><span class="opt-label">B</span> The secret value is replaced with <code>***</code> — Azure Pipelines masks all occurrences of secret values in logs regardless of how they appear</div>
+          <div class="option wrong"><span class="opt-label">C</span> The pipeline fails — printing environment variables that contain secrets is blocked</div>
+          <div class="option wrong"><span class="opt-label">D</span> The secret is not available as an environment variable — it can only be accessed via <code>$(variable-name)</code> syntax</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> Azure Pipelines masks secret values globally in logs — any string matching the secret value is replaced with <code>***</code>, regardless of how it ended up in the log output. This is a pipeline-wide protection, not just a syntax-level mask. However, this is not foolproof — base64 encoding or other transformations of the secret may not be masked.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 14 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex14">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 14</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Configure Service Connection with Workload Identity Federation</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">WIF / OIDC</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+            <span class="badge badge-orange">Security</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Azure DevOps service connection to Azure using Workload Identity Federation (no stored client secret). Verify no credentials are stored in the connection. Restrict the service connection so only your deployment pipeline can use it. Confirm the connection works by running a pipeline that lists resource groups.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Create service connection with WIF</strong><span>Project Settings → Service connections → New service connection → Azure Resource Manager → Workload Identity Federation (automatic). Select subscription. Name: <code>azure-wif-connection</code>. Save. Azure DevOps automatically creates the App Registration and federated credential in Entra ID.</span></div></li>
+          <li><div class="step-content"><strong>Verify no secrets stored</strong><span>Open the service connection details. Notice there is no client secret field — only Client ID, Tenant ID, and Subscription ID (all non-sensitive). The federation is configured in Entra ID automatically.</span></div></li>
+          <li><div class="step-content"><strong>Restrict to specific pipeline</strong><span>Service connection → Security → Pipeline permissions → Change to "Restrict permission". Add only your deployment pipeline explicitly.</span></div></li>
+          <li><div class="step-content"><strong>Test with a pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">steps</span>:
+  - <span class="kw">task</span>: <span class="str">AzureCLI@2</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">azureSubscription</span>: <span class="str">azure-wif-connection</span>
+      <span class="kw">scriptType</span>: <span class="str">bash</span>
+      <span class="kw">scriptLocation</span>: <span class="str">inlineScript</span>
+      <span class="kw">inlineScript</span>: |
+        <span class="str">az group list --output table</span>   <span class="cm"># Should list resource groups</span></pre></div>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">A security audit finds your Azure DevOps service connection uses a client secret that expires in 30 days. What is the recommended modern replacement that eliminates secret rotation entirely?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> Replace with a client certificate — certificates are more secure than secrets</div>
+          <div class="option wrong"><span class="opt-label">B</span> Extend the secret expiry to 2 years — reducing rotation frequency is sufficient</div>
+          <div class="option correct"><span class="opt-label">C</span> Migrate to Workload Identity Federation — short-lived OIDC tokens, no stored credentials</div>
+          <div class="option wrong"><span class="opt-label">D</span> Use a Managed Identity — it works with all agent types and requires no secrets</div>
+        </div>
+        <div class="explanation">
+          <strong>C is correct.</strong> Workload Identity Federation eliminates stored credentials entirely. Azure DevOps issues a short-lived OIDC token per pipeline run, which is exchanged with Microsoft Entra ID for a temporary Azure access token. No secret or certificate to rotate, store, or expire. Managed Identity (D) requires the agent to be an Azure VM — it doesn't work with Microsoft-hosted agents.
+        </div>
+      </div>
+    </section>
+    <hr class="divider">
+
+    <!-- ============================================================ -->
+    <!-- EX 15 -->
+    <!-- ============================================================ -->
+    <section class="exercise" id="ex15">
+      <div class="ex-header">
+        <div class="ex-number week2">EX 15</div>
+        <div class="ex-title-group">
+          <div class="ex-title">Scan a Container Image and Push to Azure Container Registry</div>
+          <div class="ex-meta">
+            <span class="badge badge-orange">ACR</span>
+            <span class="badge badge-orange">Container Security</span>
+            <span class="badge badge-blue">Azure Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-blue">Lab Task</div>
+        <p>Create an Azure Pipeline that builds a Docker image, scans it for vulnerabilities using the <code>MicrosoftSecurityDevOps@1</code> task, and pushes it to Azure Container Registry only if the scan passes. Tag the image with the pipeline build ID for traceability.</p>
+      </div>
+
+      <div class="scenario-box">
+        <div class="box-label label-green">Step-by-Step Answer</div>
+        <ol class="steps-list week2">
+          <li><div class="step-content"><strong>Pre-requisites</strong><span>Create an Azure Container Registry in the portal. Create a service connection to ACR in Azure DevOps (Project Settings → Service connections → Docker Registry → Azure Container Registry).</span></div></li>
+          <li><div class="step-content"><strong>Create complete pipeline</strong></div></li>
+        </ol>
+        <div class="code-block"><pre><span class="kw">variables</span>:
+  <span class="kw">imageRepository</span>: <span class="str">myapp</span>
+  <span class="kw">containerRegistry</span>: <span class="str">myregistry.azurecr.io</span>
+  <span class="kw">tag</span>: <span class="str">$(Build.BuildId)</span>   <span class="cm"># Unique per run for traceability</span>
+
+<span class="kw">steps</span>:
+  - <span class="cm"># Step 1: Build the Docker image</span>
+    <span class="kw">task</span>: <span class="str">Docker@2</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">command</span>: <span class="str">build</span>
+      <span class="kw">repository</span>: <span class="str">$(imageRepository)</span>
+      <span class="kw">tags</span>: <span class="str">$(tag)</span>
+
+  - <span class="cm"># Step 2: Scan the built image</span>
+    <span class="kw">task</span>: <span class="str">MicrosoftSecurityDevOps@1</span>
+    <span class="kw">displayName</span>: <span class="str">Container Vulnerability Scan</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">categories</span>: <span class="str">containers</span>
+      <span class="kw">break</span>: <span class="kw">true</span>   <span class="cm"># Fail pipeline if vulnerabilities found</span>
+
+  - <span class="cm"># Step 3: Push only if scan passed</span>
+    <span class="kw">task</span>: <span class="str">Docker@2</span>
+    <span class="kw">inputs</span>:
+      <span class="kw">command</span>: <span class="str">push</span>
+      <span class="kw">containerRegistry</span>: <span class="str">acr-service-connection</span>
+      <span class="kw">repository</span>: <span class="str">$(imageRepository)</span>
+      <span class="kw">tags</span>: <span class="str">$(tag)</span></pre></div>
+        <ol class="steps-list week2" start="3">
+          <li><div class="step-content"><strong>Verify in ACR</strong><span>Azure Portal → Container Registry → Repositories. Your image appears with the build ID as the tag, providing full traceability to the pipeline run that produced it.</span></div></li>
+        </ol>
+      </div>
+
+      <div class="mcq-section">
+        <div class="box-label label-orange">MCQ Version</div>
+        <div class="mcq-question">Your pipeline builds a Docker image and scans it with <code>MicrosoftSecurityDevOps@1</code> before pushing to ACR. A critical vulnerability is found. What happens if <code>break: true</code> is set on the scan task?</div>
+        <div class="options">
+          <div class="option wrong"><span class="opt-label">A</span> The scan creates an alert but the pipeline continues and pushes the image</div>
+          <div class="option correct"><span class="opt-label">B</span> The pipeline fails at the scan step — the push step never executes</div>
+          <div class="option wrong"><span class="opt-label">C</span> The pipeline pauses and waits for a security team member to approve continuing</div>
+          <div class="option wrong"><span class="opt-label">D</span> The image is pushed with a "vulnerable" tag appended automatically</div>
+        </div>
+        <div class="explanation">
+          <strong>B is correct.</strong> <code>break: true</code> causes the <code>MicrosoftSecurityDevOps@1</code> task to fail the pipeline step when vulnerabilities above the configured threshold are found. Since the push step comes after the scan step and has the default <code>condition: succeeded()</code>, it is skipped — the vulnerable image never reaches ACR. This is the correct implementation of a security quality gate in a container build pipeline.
+        </div>
+        <div class="pitfall">
+          <div class="pitfall-label">⚠ Exam Trap</div>
+          Without <code>break: true</code>, the scan runs but only reports findings — it doesn't fail the pipeline. The image would still be pushed. Always set <code>break: true</code> when the scan should act as a quality gate, not just a reporting tool.
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div style="margin-top: 3rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; color: var(--text-muted);">
+      <div style="font-family: 'Syne', sans-serif; font-weight: 700; color: var(--text); margin-bottom: 0.5rem;">Quick Reference — Key Exam Patterns</div>
+      <table>
+        <thead><tr><th>Concept</th><th>Azure DevOps</th><th>GitHub Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Human approval gate</td><td>Environment + Approvals check</td><td>Environment + Required reviewers</td></tr>
+          <tr><td>Reusable pipeline logic</td><td>YAML templates</td><td>Reusable workflows (workflow_call)</td></tr>
+          <tr><td>Secret storage</td><td>Variable groups + Key Vault</td><td>Secrets (repo / org / environment)</td></tr>
+          <tr><td>Block direct pushes</td><td>Branch policies</td><td>Branch protection rules</td></tr>
+          <tr><td>No-secret auth to Azure</td><td>WIF service connection</td><td>OIDC + azure/login action</td></tr>
+          <tr><td>Container scanning</td><td>MicrosoftSecurityDevOps@1</td><td>MicrosoftSecurityDevOps@1 action</td></tr>
+          <tr><td>IaC deployment</td><td>AzureResourceManagerTemplateDeployment@3</td><td>azure/arm-deploy action</td></tr>
+          <tr><td>Dependency caching</td><td>Cache@2</td><td>actions/cache or setup-* cache:</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Smooth scroll for sidebar links
+  document.querySelectorAll('.sidebar-item[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Highlight active section on scroll
+  const sections = document.querySelectorAll('.exercise');
+  const sidebarLinks = document.querySelectorAll('.sidebar-item[href^="#"]');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        sidebarLinks.forEach(link => {
+          link.style.color = '';
+          link.style.borderLeftColor = 'transparent';
+          link.style.background = '';
+        });
+        const activeLink = document.querySelector(`.sidebar-item[href="#${entry.target.id}"]`);
+        if (activeLink) {
+          activeLink.style.color = 'var(--text)';
+          activeLink.style.borderLeftColor = 'var(--accent)';
+          activeLink.style.background = 'rgba(59,130,246,0.08)';
+        }
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Theme toggle
+  (function() {
+    var toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', function() {
+      document.documentElement.classList.toggle('light');
+      var isLight = document.documentElement.classList.contains('light');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+  })();
+
+  // Mobile sidebar drawer
+  (function() {
+    var menuBtn = document.getElementById('menuBtn');
+    var sidebarClose = document.getElementById('sidebarClose');
+    var overlay = document.getElementById('drawerOverlay');
+    var sidebar = document.querySelector('.sidebar');
+
+    function openDrawer() {
+      sidebar.classList.add('open');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', openDrawer);
+    sidebarClose.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    // Close drawer when a nav link is tapped
+    sidebar.querySelectorAll('.sidebar-item[href^="#"]').forEach(function(link) {
+      link.addEventListener('click', closeDrawer);
+    });
+  })();
+</script>
+</body>
+</html>
