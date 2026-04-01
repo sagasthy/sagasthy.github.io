@@ -14,6 +14,7 @@ const sidebars = {
       items: [
         "reference/build-failure-agent",
         "reference/github-copilot-guide",
+        "reference/az-400-cheasheet"
       ],
       collapsed: false,
     },

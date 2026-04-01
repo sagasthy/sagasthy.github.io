@@ -1,3 +1,9 @@
+---
+id: az-400-cheasheet
+title: AZ-400 Weak Areas Cheatsheet
+sidebar_position: 3
+---
+
 # AZ-400 Weak Areas Cheatsheet
 
 > Compiled from quiz sessions 1–6. Every concept here was missed at least once.
@@ -427,18 +433,83 @@ The `azure/pipelines` GitHub Action is purpose-built for calling Azure DevOps pi
 
 ---
 
-## 25. DORA Metrics — Weakest Link Rule
+## 25. DORA Metrics — Complete Quick Reference
+
+DORA (DevOps Research and Assessment) defines four key metrics split into two categories:
+
+| Category | Metrics | Measures |
+|---|---|---|
+| **Throughput** (speed) | Deployment Frequency, Lead Time for Changes | How fast you deliver |
+| **Stability** (quality) | Change Failure Rate, Failed Deployment Recovery Time (MTTR) | How reliable your delivery is |
+
+> High performers excel at **both** — speed and stability are not a trade-off in elite teams.
+
+---
+
+### Metric Definitions & How to Measure
+
+| Metric | Definition | Measured as | Formula / Source |
+|---|---|---|---|
+| **Deployment Frequency** | How often code is deployed to production or released to end users | Deployments per day/week/month | Count of production deployments over time period |
+| **Lead Time for Changes** | Time from first commit to code running in production | Duration (hours/days) | `deploy_timestamp − first_commit_timestamp` |
+| **Change Failure Rate (CFR)** | % of deployments that cause a production failure requiring immediate remediation (hotfix, rollback, patch) | Percentage | `(failed deploys ÷ total deploys) × 100` |
+| **Failed Deployment Recovery Time** (MTTR) | Time to restore service after a production failure caused by a deployment | Duration (hours/days) | `service_restored_timestamp − incident_start_timestamp` |
+
+**Key distinction:** Lead Time measures delivery speed. Cycle Time (a related metric) measures only active work time. Lead Time ≥ Cycle Time always.
+
+---
+
+### Performance Bands
 
 Overall DORA performance band is determined by the **lowest-performing metric**.
 
 | Metric | Elite | High | Medium | Low |
 |---|---|---|---|---|
-| Deploy Frequency | Multiple/day | Weekly–monthly | Monthly | < Monthly |
-| Lead Time | < 1 hour | 1 day–1 week | 1 week–1 month | > 1 month |
-| Change Failure Rate | 0–15% | 16–30% | 16–30% | 16–30% |
-| MTTR | < 1 hour | < 1 day | 1 day–1 week | > 1 week |
+| **Deployment Frequency** | Multiple times/day | Once/week – once/month | Once/month – once every 6 months | Less than once every 6 months |
+| **Lead Time for Changes** | &lt; 1 hour | 1 day – 1 week | 1 week – 1 month | &gt; 1 month |
+| **Change Failure Rate** | 0–15% | 0–15% | 0–15% | 46–60% |
+| **Failed Deployment Recovery Time** | &lt; 1 hour | &lt; 1 day | 1 day – 1 week | &gt; 1 week |
 
-**Exam trap:** Two strong metrics + one medium metric = overall **Medium** band. Strong metrics don't compensate for weak ones.
+**Exam trap:** Two strong metrics + one medium metric = overall **Medium** band. Strong metrics do not compensate for weak ones.
+
+---
+
+### Improving Each Metric
+
+| Metric | Top levers to improve |
+|---|---|
+| **Deployment Frequency** | Trunk-based development, feature flags, CI/CD automation, smaller batch sizes |
+| **Lead Time for Changes** | Reduce PR review wait time, automate tests, eliminate manual approval gates |
+| **Change Failure Rate** | Automated testing coverage, canary/progressive deployments, shift-left quality |
+| **Failed Deployment Recovery Time** | Automated rollback, feature flags for instant kill switches, observability/alerting |
+
+---
+
+### 5th Metric: Deployment Rework Rate *(added 2024)*
+
+Introduced in the 2024 DORA report as a stability metric alongside CFR:
+
+| Metric | Definition | Formula |
+|---|---|---|
+| **Deployment Rework Rate** | % of deployments that are **unplanned** and made to address a user-facing production incident (hotfix deployments) | `(unplanned/hotfix deploys ÷ total deploys) × 100` |
+
+**Difference from CFR:** CFR counts failures; Rework Rate counts the reactive deployments those failures generate. A single failure can cause multiple hotfix deployments. CFR + Rework Rate together give a fuller stability picture.
+
+> **AZ-400 exam note:** The exam objectives (updated July 26, 2024) are anchored to the four core metrics. Know the 5th metric conceptually but focus exam prep on the four keys.
+
+---
+
+### DORA Exam Trigger Words
+
+| Phrase in question | Correct metric |
+|---|---|
+| "how often code reaches production" | Deployment Frequency |
+| "from commit to production" | Lead Time for Changes |
+| "from feature being requested" | Lead Time (includes backlog wait) |
+| "from developer picks up / starts work" | Cycle Time (not a DORA metric, but related) |
+| "% of deploys that break prod" | Change Failure Rate |
+| "time to restore service after outage" | Failed Deployment Recovery Time / MTTR |
+| "reactive / unplanned deployments" | Deployment Rework Rate |
 
 ---
 
